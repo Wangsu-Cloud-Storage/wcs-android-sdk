@@ -6,8 +6,8 @@ ANDROID SDK基于网宿云存储API规范构建，适用于ANDROID。使用此SD
 - [移动端场景演示](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#移动端场景演示)
 - [使用指南](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#使用指南) 
   [准备开发环境](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#准备开发环境)
-[配置信息](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#配置信息)
-[文件上传](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#文件上传)
+  [配置信息](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#配置信息)
+  [文件上传](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#文件上传)
 
 ## 工程介绍
 
@@ -75,12 +75,14 @@ demo 例子
 
 在获取到AK和SK等信息之后，您可以按照如下方式进行信息初始化：
 
-    import com.chinanetcenter.api.util.Config;
-    //1.初始化AK&SK信息
-    String ak = "your access key";
-    String sk = "your secrete key";
-    String PUT_URL = "your uploadDomain";
-    Config.init(ak,sk,PUT_URL,"");
+```java
+import com.chinanetcenter.api.util.Config;
+//1.初始化AK&SK信息
+String ak = "your access key";
+String sk = "your secrete key";
+String PUT_URL = "your uploadDomain";
+Config.init(ak,sk,PUT_URL,"");
+```
 
 #### 文件上传
 
@@ -102,56 +104,60 @@ demo 例子
 
 移动端代码：
 
-    /**
-     * 上传接口范例
-     */
-    private void uploadFile(File srcFile) {
-    /**
-             * UPLOADER_TOKEN-上传凭证
-             * srcFile-本地待上传的文件
-             */
-            FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
-    
-                @Override
-                public void onSuccess(int status, JSONObject responseJson) {
-                    Log.d(TAG, "responseJson : " + responseJson.toString());
-                }
-    
-                @Override
-                public void onFailure(OperationMessage operationMessage) {
-                    Log.e(TAG, "errorMessage : " + operationMessage.toString());
-                }
-    
-                @Override
-                public void onProgress(int bytesWritten, int totalSize) {
-                    Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
-                }
-            });
-        }
+```java
+/**
+ * 上传接口范例
+ */
+private void uploadFile(File srcFile) {
+/**
+         * UPLOADER_TOKEN-上传凭证
+         * srcFile-本地待上传的文件
+         */
+        FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
+
+            @Override
+            public void onSuccess(int status, JSONObject responseJson) {
+                Log.d(TAG, "responseJson : " + responseJson.toString());
+            }
+
+            @Override
+            public void onFailure(OperationMessage operationMessage) {
+                Log.e(TAG, "errorMessage : " + operationMessage.toString());
+            }
+
+            @Override
+            public void onProgress(int bytesWritten, int totalSize) {
+                Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
+            }
+        });
+    }
+```
 
 服务端代码（生成上传凭证）：
 
-    import com.chinanetcenter.api.domain.PutPolicy;
-    import com.chinanetcenter.api.util.DateUtil;
-    import com.chinanetcenter.api.util.TokenUtil;
-    import com.chinanetcenter.api.util.Config;
-    
-        ......
-    
-        public String uploadToken() {
-    //初始化AK&SK信息
-            String ak = "your access key";
-            String sk = "your secrete key";
-            Config.init(ak, sk);
-            PutPolicy putPolicy = new PutPolicy();
-            //设置scope（空间:文件名）
-            putPolicy.setScope("viptest:sz1001");
-            //设置请求过期时间
-            long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
-            putPolicy.setDeadline(String.valueOf(time));
-            String uploadToken = TokenUtil.getUploadToken(putPolicy);
-            return uploadToken;
-        }
+```java
+import com.chinanetcenter.api.domain.PutPolicy;
+import com.chinanetcenter.api.util.DateUtil;
+import com.chinanetcenter.api.util.TokenUtil;
+import com.chinanetcenter.api.util.Config;
+
+    ......
+
+    public String uploadToken() {
+//初始化AK&SK信息
+        String ak = "your access key";
+        String sk = "your secrete key";
+        Config.init(ak, sk);
+        PutPolicy putPolicy = new PutPolicy();
+        //设置scope（空间:文件名）
+        putPolicy.setScope("viptest:sz1001");
+        //设置请求过期时间
+        long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
+        putPolicy.setDeadline(String.valueOf(time));
+        String uploadToken = TokenUtil.getUploadToken(putPolicy);
+        return uploadToken;
+    }
+```
 
 2.回调上传（POST方式） 
 
@@ -166,61 +172,65 @@ demo 例子
 
 移动端代码：
 
-     /**
-         * 上传接口范例
+```java
+ /**
+     * 上传接口范例
+     */
+private void uploadFile(File srcFile) {
+/**
+         * UPLOADER_TOKEN-上传凭证
+         * srcFile-本地待上传的文件
          */
-    private void uploadFile(File srcFile) {
-    /**
-             * UPLOADER_TOKEN-上传凭证
-             * srcFile-本地待上传的文件
-             */
-            FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
-    
-                @Override
-                public void onSuccess(int status, JSONObject responseJson) {
-                    Log.d(TAG, "responseJson : " + responseJson.toString());
-                }
-    
-                @Override
-                public void onFailure(OperationMessage operationMessage) {
-                    Log.e(TAG, "errorMessage : " + operationMessage.toString());
-                }
-    
-                @Override
-                public void onProgress(int bytesWritten, int totalSize) {
-                    Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
-                }
-            });
-    
-        }
-        
+        FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
+
+            @Override
+            public void onSuccess(int status, JSONObject responseJson) {
+                Log.d(TAG, "responseJson : " + responseJson.toString());
+            }
+
+            @Override
+            public void onFailure(OperationMessage operationMessage) {
+                Log.e(TAG, "errorMessage : " + operationMessage.toString());
+            }
+
+            @Override
+            public void onProgress(int bytesWritten, int totalSize) {
+                Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
+            }
+        });
+
+    }
+```
+
 服务端代码（生成上传凭证）：
 
-    import com.chinanetcenter.api.domain.PutPolicy;
-    import com.chinanetcenter.api.util.DateUtil;
-    import com.chinanetcenter.api.util.TokenUtil;
-    import com.chinanetcenter.api.util.Config;
-    
-        ......
-    
-        public String uploadToken() {
-    //初始化AK&SK信息
-            String ak = "your access key";
-            String sk = "your secrete key";
-            Config.init(ak, sk);
-            PutPolicy putPolicy = new PutPolicy();
-            //设置scope（空间:文件名）
-            putPolicy.setScope("viptest:sz1001");
-            //设置请求过期时间
-            long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
-            putPolicy.setDeadline(String.valueOf(time));
-            //设置回调URL
-            putPolicy.setCallbackUrl(callbackUrl);
-            //设置回调信息格式（如果不想自定义格式，该处设置为NULL即可）
-            putPolicy.setCallbackBody(callbackBody);
-            String uploadToken = TokenUtil.getUploadToken(putPolicy);
-            return uploadToken;
-        }
+```java
+import com.chinanetcenter.api.domain.PutPolicy;
+import com.chinanetcenter.api.util.DateUtil;
+import com.chinanetcenter.api.util.TokenUtil;
+import com.chinanetcenter.api.util.Config;
+
+    ......
+
+    public String uploadToken() {
+//初始化AK&SK信息
+        String ak = "your access key";
+        String sk = "your secrete key";
+        Config.init(ak, sk);
+        PutPolicy putPolicy = new PutPolicy();
+        //设置scope（空间:文件名）
+        putPolicy.setScope("viptest:sz1001");
+        //设置请求过期时间
+        long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
+        putPolicy.setDeadline(String.valueOf(time));
+        //设置回调URL
+        putPolicy.setCallbackUrl(callbackUrl);
+        //设置回调信息格式（如果不想自定义格式，该处设置为NULL即可）
+        putPolicy.setCallbackBody(callbackBody);
+        String uploadToken = TokenUtil.getUploadToken(putPolicy);
+        return uploadToken;
+    }
+```
 
 3.通知上传 (POST方式) 
 
@@ -231,61 +241,65 @@ demo 例子
 
 移动端代码：
 
-    /**
-         * 上传接口范例
+```java
+/**
+     * 上传接口范例
+     */
+private void uploadFile(File srcFile) {
+/**
+         * UPLOADER_TOKEN-上传凭证
+         * srcFile-本地待上传的文件
          */
-    private void uploadFile(File srcFile) {
-    /**
-             * UPLOADER_TOKEN-上传凭证
-             * srcFile-本地待上传的文件
-             */
-            FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
-    
-                @Override
-                public void onSuccess(int status, JSONObject responseJson) {
-                    Log.d(TAG, "responseJson : " + responseJson.toString());
-                }
-    
-                @Override
-                public void onFailure(OperationMessage operationMessage) {
-                    Log.e(TAG, "errorMessage : " + operationMessage.toString());
-                }
-    
-                @Override
-                public void onProgress(int bytesWritten, int totalSize) {
-                    Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
-                }
-            });
-    
-        }
+        FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
+
+            @Override
+            public void onSuccess(int status, JSONObject responseJson) {
+                Log.d(TAG, "responseJson : " + responseJson.toString());
+            }
+
+            @Override
+            public void onFailure(OperationMessage operationMessage) {
+                Log.e(TAG, "errorMessage : " + operationMessage.toString());
+            }
+
+            @Override
+            public void onProgress(int bytesWritten, int totalSize) {
+                Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
+            }
+        });
+
+    }
+```
 
 服务端代码（生成上传凭证）：
 
-    import com.chinanetcenter.api.domain.PutPolicy;
-    import com.chinanetcenter.api.util.DateUtil;
-    import com.chinanetcenter.api.util.TokenUtil;
-    import com.chinanetcenter.api.util.Config;
-    
-        ......
-    
-        public String uploadToken() {
-    //初始化AK&SK信息
-            String ak = "your access key";
-            String sk = "your secrete key";
-            Config.init(ak, sk);
-            PutPolicy putPolicy = new PutPolicy();
-            //设置scope（空间:文件名）
-            putPolicy.setScope("viptest:sz1001");
-            //设置请求过期时间
-            long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
-            putPolicy.setDeadline(String.valueOf(time));
-            //设置异步数据处理指令（参考附录一的处理指令介绍-目前支持视频类的异步处理，如果不需要异步处理，不建议使用该方式做上传）
-            putPolicy.setPersistentOps(cmd); 
-            //设置异步处理后回调的URL
-            putPolicy.setPersistentNotifyUrl(notifyUrl); 
-    String uploadToken = TokenUtil.getUploadToken(putPolicy);
-            return uploadToken;
-        }
+```java
+import com.chinanetcenter.api.domain.PutPolicy;
+import com.chinanetcenter.api.util.DateUtil;
+import com.chinanetcenter.api.util.TokenUtil;
+import com.chinanetcenter.api.util.Config;
+
+    ......
+
+    public String uploadToken() {
+//初始化AK&SK信息
+        String ak = "your access key";
+        String sk = "your secrete key";
+        Config.init(ak, sk);
+        PutPolicy putPolicy = new PutPolicy();
+        //设置scope（空间:文件名）
+        putPolicy.setScope("viptest:sz1001");
+        //设置请求过期时间
+        long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
+        putPolicy.setDeadline(String.valueOf(time));
+        //设置异步数据处理指令（参考附录一的处理指令介绍-目前支持视频类的异步处理，如果不需要异步处理，不建议使用该方式做上传）
+        putPolicy.setPersistentOps(cmd); 
+        //设置异步处理后回调的URL
+        putPolicy.setPersistentNotifyUrl(notifyUrl); 
+String uploadToken = TokenUtil.getUploadToken(putPolicy);
+        return uploadToken;
+    }
+```
 
 4.分片上传（POST方式） 
 
@@ -299,54 +313,58 @@ demo 例子
 
 移动端代码：
 
-    private static final long DEFAULT_BLOCK_SIZE = 1 * 1024 * 1024;
-    /**
-    * context-应用当前的上下文
-    * uploadToken-上传Token
-    * ipaFile-需要上传的文件
-    * DEFAULT_BLOCK_SIZE-块大小
-    */
-    FileUploader.sliceUpload(context, uploadToken, ipaFile, DEFAULT_BLOCK_SIZE, new SliceUploaderListener() {
-              @Override
-              public void onSliceUploadSucceed(JSONObject jsonObject) {
-    Log.d("CNCLog", "slice upload succeeded.");
-    }
-    
-    @Override
-    public void onSliceUploadFailured(OperationMessage operationMessage) {
-    Log.d("CNCLog", "slice upload failured.");
-    }
-    
-    @Override
-    public void onProgress(long uploaded, long total) {
-    Log.d("CNCLog", String.format(Locale.CHINA, "uploaded : %s, total : %s", uploaded, total));
-    }
-    });
+```java
+private static final long DEFAULT_BLOCK_SIZE = 1 * 1024 * 1024;
+/**
+* context-应用当前的上下文
+* uploadToken-上传Token
+* ipaFile-需要上传的文件
+* DEFAULT_BLOCK_SIZE-块大小
+*/
+FileUploader.sliceUpload(context, uploadToken, ipaFile, DEFAULT_BLOCK_SIZE, new SliceUploaderListener() {
+          @Override
+          public void onSliceUploadSucceed(JSONObject jsonObject) {
+Log.d("CNCLog", "slice upload succeeded.");
+}
+
+@Override
+public void onSliceUploadFailured(OperationMessage operationMessage) {
+Log.d("CNCLog", "slice upload failured.");
+}
+
+@Override
+public void onProgress(long uploaded, long total) {
+Log.d("CNCLog", String.format(Locale.CHINA, "uploaded : %s, total : %s", uploaded, total));
+}
+});
+```
 
 服务端代码：
 
-    import com.chinanetcenter.api.domain.PutPolicy;
-    import com.chinanetcenter.api.util.DateUtil;
-    import com.chinanetcenter.api.util.TokenUtil;
-    import com.chinanetcenter.api.util.Config;
-    
-        ......
-    
-        public String uploadToken() {
-    //初始化AK&SK信息
-            String ak = "your access key";
-            String sk = "your secrete key";
-            Config.init(ak, sk);
-            PutPolicy putPolicy = new PutPolicy();
-            //设置scope（空间:文件名）
-            putPolicy.setScope("viptest:sz1001");
-            //设置请求过期时间
-            long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
-            putPolicy.setDeadline(String.valueOf(time));
-            //设置异步数据处理指令（参考附录一的处理指令介绍-目前支持视频类的异步处理，如果不需要异步处理，不建议使用该方式做上传）
-            putPolicy.setPersistentOps(cmd); 
-            //设置异步处理后回调的URL
-            putPolicy.setPersistentNotifyUrl(notifyUrl); 
-    String uploadToken = TokenUtil.getUploadToken(putPolicy);
-            return uploadToken;
-        }
+```java
+import com.chinanetcenter.api.domain.PutPolicy;
+import com.chinanetcenter.api.util.DateUtil;
+import com.chinanetcenter.api.util.TokenUtil;
+import com.chinanetcenter.api.util.Config;
+
+    ......
+
+    public String uploadToken() {
+//初始化AK&SK信息
+        String ak = "your access key";
+        String sk = "your secrete key";
+        Config.init(ak, sk);
+        PutPolicy putPolicy = new PutPolicy();
+        //设置scope（空间:文件名）
+        putPolicy.setScope("viptest:sz1001");
+        //设置请求过期时间
+        long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
+        putPolicy.setDeadline(String.valueOf(time));
+        //设置异步数据处理指令（参考附录一的处理指令介绍-目前支持视频类的异步处理，如果不需要异步处理，不建议使用该方式做上传）
+        putPolicy.setPersistentOps(cmd); 
+        //设置异步处理后回调的URL
+        putPolicy.setPersistentNotifyUrl(notifyUrl); 
+String uploadToken = TokenUtil.getUploadToken(putPolicy);
+        return uploadToken;
+    }
+```
