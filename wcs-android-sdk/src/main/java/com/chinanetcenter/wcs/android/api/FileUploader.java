@@ -142,6 +142,10 @@ public class FileUploader {
      * @param uploaderListener 上传的回调
      */
     public static void upload(Context context, String token, Uri fileUri, HashMap<String, String> callbackBody, FileUploaderListener uploaderListener) {
+        if (null == fileUri || fileUri.toString().trim().equals("")) {
+            uploaderListener.onFailure(new OperationMessage(-1, "fileUri no exists "));
+            return;
+        }
         upload(context, token, FileUtil.getFile(context, fileUri), callbackBody, uploaderListener);
     }
 
@@ -389,8 +393,9 @@ public class FileUploader {
                     ByteArray tmp = null;
                     try {
                         sem.acquire();
-                        if (!arrayBuffersList.isEmpty())
+                        if (!arrayBuffersList.isEmpty()) {
                             tmp = arrayBuffersList.pop();
+                        }
                         final ByteArray finalTmp = tmp;
                         uploadBlock(context, uploadToken, blocks[finalI], finalI, sliceCache, tag,
                                 progressNotifier, new UploadBlockListener() {
