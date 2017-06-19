@@ -17,13 +17,6 @@ public class UploadFileRequest extends WcsRequest {
 //    private String bucketName;
     private String objectKey;
 
-    private ObjectMetadata metadata;
-
-    //eg:    new HashMap<String, String>() {
-//        {
-//            put("callbackUrl", "110.75.82.106/mbaas/callback");
-//            put("callbackBody", "test");
-//        }
     private Map<String, String> callbackParam;
 
     private Map<String, String> callbackVars;
@@ -37,15 +30,6 @@ public class UploadFileRequest extends WcsRequest {
 
     public void setObjectKey(String objectKey) {
         this.objectKey = objectKey;
-    }
-
-
-    public ObjectMetadata getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(ObjectMetadata metadata) {
-        this.metadata = metadata;
     }
 
     public Map<String, String> getCallbackParam() {
