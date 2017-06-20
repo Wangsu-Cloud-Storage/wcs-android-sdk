@@ -8,8 +8,9 @@ import com.chinanetcenter.wcs.android.internal.WcsProgressCallback;
 
 
 public abstract class FileUploaderStringListener implements
-    WcsCompletedCallback<UploadFileRequest, UploadFileResult>,
-    WcsProgressCallback<UploadFileRequest> {
+        WcsCompletedCallback<UploadFileRequest, UploadFileResult>,
+        WcsProgressCallback<UploadFileRequest> {
+    UploadFileResult result;
 
     @Override
     public void onProgress(UploadFileRequest request, long currentSize, long totalSize) {
@@ -19,7 +20,8 @@ public abstract class FileUploaderStringListener implements
 
     @Override
     public void onSuccess(UploadFileRequest request, UploadFileResult result) {
-        onSuccess(result.getStatusCode(), result.getResponseJson());
+        this.result = result;
+        onSuccess(result.getStatusCode(), result.getResponse());
     }
 
     @Override

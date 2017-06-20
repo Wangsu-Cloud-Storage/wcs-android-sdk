@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.chinanetcenter.wcs.android.ClientConfig;
 import com.chinanetcenter.wcs.android.LogRecorder;
 import com.chinanetcenter.wcs.android.internal.InternalRequest;
+import com.chinanetcenter.wcs.android.network.WcsResult;
 import com.chinanetcenter.wcs.android.utils.EncodeUtils;
 import com.chinanetcenter.wcs.android.utils.WCSLogUtil;
 
@@ -39,6 +40,46 @@ public class BaseApi {
 
     static boolean isNetworkReachable() {
         return true;
+    }
+
+    public static JSONObject parseWCSUploadResponse(WcsResult result) {
+        WCSLogUtil.d("parsing upload response : " + result.getResponse());
+
+        JSONObject responseJsonObject = null;
+        try {
+            responseJsonObject = new JSONObject(result.getResponse());
+        } catch (JSONException e) {
+            WCSLogUtil.d("Try serializing as json failured, response may encoded.");
+        }
+
+        if (null == responseJsonObject) {
+            responseJsonObject = new JSONObject();
+            if (!TextUtils.isEmpty(result.getResponse())) {
+                try {
+                    String response = EncodeUtils.urlsafeDecodeString(result.getResponse());
+                    WCSLogUtil.d("response string : " + response);
+                    String[] params = response.split("&");
+                    for (String param : params) {
+                        int index = param.indexOf("=");
+                        if (index > 0) {
+                            try {
+                                responseJsonObject.put(param.substring(0, index), param.substring(index + 1));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                } catch (IllegalArgumentException e) {
+                    WCSLogUtil.d("bad base-64");
+                    try {
+                        responseJsonObject.put("headers", result.getHeaders());
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        }
+        return responseJsonObject;
     }
 
     public static JSONObject parseWCSUploadResponse(String responseString) {

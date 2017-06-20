@@ -12,7 +12,7 @@ public class WcsResult {
 
     private String requestId;
 
-    private String responseJson;
+    private String response;
 
     /**
      * 响应结果的HTTP响应码
@@ -53,11 +53,23 @@ public class WcsResult {
         this.requestId = requestId;
     }
 
-    public String getResponseJson() {
-        return responseJson;
+    public String getResponse() {
+        return response;
     }
 
-    public void setResponseJson(String responseJson) {
-        this.responseJson = responseJson;
+    public void setResponse(String response) {
+        this.response = response;
     }
+
+    public String getHeaders() {
+        StringBuilder headersStringBuffer = new StringBuilder();
+        for (Object key : responseHeader.keySet()) {
+            headersStringBuffer.append(key)
+                    .append(" : ")
+                    .append(responseHeader.get(key))
+                    .append(" , ");
+        }
+        return headersStringBuffer.toString();
+    }
+
 }

@@ -35,7 +35,7 @@ dependencies {
 }
 
 def SDK_BASENAME = "wcs-android-sdk";
-def SDK_VERSION = "-1.6.1";
+def SDK_VERSION = "-1.6.2";
 def sdkDestinationPath = "build/outputs";
 def zipFile = file('build/intermediates/bundles/release/classes.jar')
 

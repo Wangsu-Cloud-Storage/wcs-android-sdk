@@ -15,18 +15,15 @@ public class OperationMessage {
     private String message;
     private Throwable error;
 
-    public static OperationMessage fromJsonString(String jsonString, String requestId, Throwable error) {
+
+    public static OperationMessage fromJsonString(String jsonString, String requestId, Throwable error) throws JSONException {
         OperationMessage errorMessage = new OperationMessage();
         if (!TextUtils.isEmpty(jsonString)) {
-            try {
-                JSONObject jsonObject = new JSONObject(jsonString);
-                jsonObject.put(WcsResult.REQUEST_ID, requestId);
-                errorMessage.message = jsonObject.toString();
+            JSONObject jsonObject = new JSONObject(jsonString);
+            jsonObject.put(WcsResult.REQUEST_ID, requestId);
+            errorMessage.message = jsonObject.toString();
 //                errorMessage.status = 500;
 //                errorMessage.message = "服务器内部错误";
-            } catch (JSONException e) {
-                Log.e("CNCLog", "json error : " + jsonString);
-            }
         }
         errorMessage.error = error;
         return errorMessage;
@@ -98,19 +95,19 @@ public class OperationMessage {
         this.message = message;
     }
 
-    @Override
-    public String toString() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.putOpt("status", status);
-            jsonObject.putOpt("message", message);
-            if (null != error) {
-                jsonObject.putOpt("error", WCSLogUtil.getStackTraceString(this.error));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonObject.toString();
-    }
+//    @Override
+//    public String toString() {
+//        JSONObject jsonObject = new JSONObject();
+//        try {
+//            jsonObject.putOpt("status", status);
+//            jsonObject.putOpt("message", message);
+//            if (null != error) {
+//                jsonObject.putOpt("error", WCSLogUtil.getStackTraceString(this.error));
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return jsonObject.toString();
+//    }
 
 }

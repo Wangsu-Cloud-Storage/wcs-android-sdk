@@ -365,19 +365,23 @@ public class SliceUploadTest {
 
     @Test
     public void testConcurrent() throws Exception {
+        FileUploader.setUploadUrl("http://lmsv-up.ksmobile.net");
+        final String token = "5c2a09ff8bada8d9c76c0261117e806bfda785db:YWRmOWMyMzI4NGY4ZDQxMGZkYzRjNmY2YzNiM2E5MzM0MDgzMjNlZg==:eyJzY29wZSI6ImxpdmVtZS1zdjoyMDE3MDYxOVwvNTc3OTE0ODg1MTgwMzc1NTAzOTY1MDA4NjkxMjEwLm1wNCIsImRlYWRsaW5lIjoxNDk3OTU4MTQ2MjAzLCJvdmVyd3JpdGUiOjEsInJldHVybkJvZHkiOiJ1cmw9JCh1cmwpJmZzaXplPSQoZnNpemUpIn0=";
         final CountDownLatch latch1 = new CountDownLatch(1);
-        final CountDownLatch latch2 = new CountDownLatch(5);
-        final int[] count = {0};
-        for (int i = 0; i < 5; i++) {
+        int total=15;
+        final CountDownLatch latch2 = new CountDownLatch(total);
+        final int[] success = {0};
+        final int[] fail = {0};
+        for (int i = 0; i < total; i++) {
             final int index = i;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        String filePath = InstrumentationRegistry.getTargetContext().getFilesDir() + File.separator + WcsTestConfig.sFileNameArray[index];
+                        String filePath = InstrumentationRegistry.getTargetContext().getFilesDir() + File.separator + WcsTestConfig.sFileNameArray[index/2];
+//                        String filePath = InstrumentationRegistry.getTargetContext().getFilesDir() + File.separator + WcsTestConfig.sFileNameArray[index];
                         latch1.await();
-                        sliceUpload(filePath, WcsTestConfig.TOKEN, filePath, null, count);
-                        latch2.countDown();
+                        sliceUpload(filePath, token, filePath, null, success,fail,latch2);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -386,28 +390,36 @@ public class SliceUploadTest {
         }
         latch1.countDown();
         latch2.await();
-        Assert.assertEquals(5, count[0]);
+        Assert.assertEquals(total, success[0]);
     }
 
-    private void sliceUpload(String tag, String token, String filePath, HashMap<String, String> callbackBody, final int[] count) throws InterruptedException {
+    private void sliceUpload(String tag, String token, String filePath, HashMap<String, String> callbackBody, final int[] success,final int[] fail , final CountDownLatch latch2) throws InterruptedException {
         final CountDownLatch signal = new CountDownLatch(1);
         File file = new File(filePath);
+
         FileUploader.sliceUpload(tag, InstrumentationRegistry.getTargetContext(),
                 token, file, callbackBody, new SliceUploaderListener() {
                     @Override
                     public void onSliceUploadSucceed(JSONObject reponseJSON) {
                         Log.d(TAG, "onSuccess: " + reponseJSON);
-                        count[0]++;
+                        success[0]++;
                         signal.countDown();
+                        if(success[0]+fail[0]==5){
+                            latch2.countDown();
+                        }
                     }
 
 
                     @Override
                     public void onSliceUploadFailured(HashSet<String> errorMessages) {
+                        fail[0]++;
                         StringBuilder sb = new StringBuilder();
                         for (String string : errorMessages) {
                             sb.append(string + "\r\n");
                             Log.e(TAG, "errorMessage : " + string);
+                        }
+                        if(success[0]+fail[0]==5){
+                            latch2.countDown();
                         }
                         signal.countDown();
                     }
