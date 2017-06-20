@@ -1,6 +1,7 @@
 package com.chinanetcenter.wcs.android.internal;
 
-import com.chinanetcenter.wcs.android.entity.MergeBlockResult;
+import android.support.annotation.NonNull;
+
 import com.chinanetcenter.wcs.android.entity.SliceResponse;
 import com.chinanetcenter.wcs.android.network.ResponseParser;
 import com.chinanetcenter.wcs.android.network.WcsResult;
@@ -26,34 +27,32 @@ public class ResponseParsers {
 
 
     public static class BaseResponseParser implements ResponseParser<WcsResult> {
+
         @Override
         public WcsResult parse(Response response) throws IOException {
             WcsResult result = new WcsResult();
-            result.setStatusCode(response.code());
-            Map<String, String> responseHeader = parseResponseHeader(response);
-            result.setRequestId(responseHeader.get(WcsResult.REQUEST_ID));
-            result.setResponseHeader(responseHeader);
-
-            String jsonStr = parseResponse(response.body().byteStream());
-            result.setResponseJson(jsonStr);
-
+            setWcsResult(response, result);
             return result;
         }
+    }
+
+    @NonNull
+    private static void setWcsResult(Response response, WcsResult result) throws IOException {
+        result.setStatusCode(response.code());
+        Map<String, String> responseHeader = parseResponseHeader(response);
+        result.setResponseHeader(responseHeader);
+        if (!response.isSuccessful()) {
+            result.setRequestId(responseHeader.get(WcsResult.REQUEST_ID));
+        }
+        result.setResponse(response.body() == null ? "" : parseResponse(response.body().byteStream()));
+
     }
 
     public static class UploadResponseParser implements ResponseParser<UploadFileResult> {
         @Override
         public UploadFileResult parse(Response response) throws IOException {
             UploadFileResult result = new UploadFileResult();
-            result.setStatusCode(response.code());
-            Map<String, String> responseHeader = parseResponseHeader(response);
-            result.setRequestId(responseHeader.get(WcsResult.REQUEST_ID));
-            result.setResponseHeader(responseHeader);
-            result.setETag("22222");// TODO: 2017/5/11 需要补充
-
-            String jsonStr = parseResponse(response.body().byteStream());
-            result.setResponseJson(jsonStr);
-
+            setWcsResult(response, result);
             return result;
         }
     }
@@ -62,19 +61,18 @@ public class ResponseParsers {
         @Override
         public SliceResponse parse(Response response) throws IOException {
             SliceResponse result = new SliceResponse();
-            String jsonStr = parseResponse(response.body().byteStream());
-            result.setResponseJson(jsonStr);
+            setWcsResult(response, result);
             if (response.isSuccessful()) {
-                SliceResponse.fromJsonString(result, jsonStr);
-            }else{
-                Map<String, String> responseHeader = parseResponseHeader(response);
-                result.setRequestId(responseHeader.get(WcsResult.REQUEST_ID));
+                SliceResponse.fromJsonString(result, result.getResponse());
             }
             return result;
         }
     }
 
     private static String parseResponse(InputStream in) throws IOException {
+        if (in == null) {
+            return "";
+        }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] data = new byte[1024];
         int count = -1;
@@ -84,25 +82,10 @@ public class ResponseParsers {
         data = null;
         String jsonStr = new String(outputStream.toByteArray(), "utf-8");
 
-        if (outputStream != null) {
-            outputStream.close();
-        }
+        outputStream.close();
         return jsonStr;
     }
 
-    public static class UploadMergeBlockResponseParser implements ResponseParser<MergeBlockResult> {
-        @Override
-        public MergeBlockResult parse(Response response) throws IOException {
-            MergeBlockResult result = new MergeBlockResult();
-            String jsonStr = parseResponse(response.body().byteStream());
-            result.setResponseJson(jsonStr);
-            if (response.isSuccessful()) {
-                MergeBlockResult.fromJsonString(result, jsonStr);
-            }
-
-            return result;
-        }
-    }
 
     public static void safeCloseResponse(Response response) {
         try {

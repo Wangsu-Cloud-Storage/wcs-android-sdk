@@ -10,7 +10,7 @@ import org.json.JSONObject;
 public abstract class FileUploaderListener extends FileUploaderStringListener {
 
     public final void onSuccess(int status, String responseString) {
-        onSuccess(status, BaseApi.parseWCSUploadResponse(responseString));
+        onSuccess(status, BaseApi.parseWCSUploadResponse(result));
     }
 
     /**

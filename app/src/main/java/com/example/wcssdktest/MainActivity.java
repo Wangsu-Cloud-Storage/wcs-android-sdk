@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.chinanetcenter.wcs.android.ClientConfig;
+import com.chinanetcenter.wcs.android.LogRecorder;
 import com.chinanetcenter.wcs.android.api.FileUploader;
 import com.chinanetcenter.wcs.android.api.ParamsConf;
 import com.chinanetcenter.wcs.android.entity.OperationMessage;
@@ -156,12 +157,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
         conf.fileName = TextUtils.isEmpty(mFilenameEt.getText().toString()) ? "" : mFilenameEt.getText().toString();
         conf.keyName = TextUtils.isEmpty(mKeyEt.getText().toString()) ? "" : mKeyEt.getText().toString();
         conf.mimeType = TextUtils.isEmpty(mMimeTypeEt.getText().toString()) ? "" : mMimeTypeEt.getText().toString();
-        FileUploader.setBlockConfigs(TextUtils.isEmpty(mBlockEt.getText().toString()) ? 0 : Integer.valueOf(mBlockEt.getText().toString()), TextUtils.isEmpty(mSliceEt.getText().toString()) ? 0 : Integer.valueOf(mSliceEt.getText().toString()));
-        ClientConfig config = new ClientConfig();
-        config.setMaxConcurrentRequest(10);
-        FileUploader.setClientConfig(config);
-        FileUploader.setUploadUrl(mBaseUrlEt.getText().toString().trim());
         FileUploader.setParams(conf);
+        FileUploader.setBlockConfigs(TextUtils.isEmpty(mBlockEt.getText().toString()) ? 0 : Integer.valueOf(mBlockEt.getText().toString()), TextUtils.isEmpty(mSliceEt.getText().toString()) ? 0 : Integer.valueOf(mSliceEt.getText().toString()));
+        FileUploader.setUploadUrl(mBaseUrlEt.getText().toString().trim());
+//        FileUploader.setUploadUrl(TextUtils.isEmpty(mBaseUrlEt.getText().toString().trim())?"http://apitestuser.up0.v1.wcsapi.com":mBaseUrlEt.getText().toString().trim());
     }
 
     private void showLoadingDialog() {
@@ -186,7 +185,11 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
     }
 
     private void init() {
+        LogRecorder.getInstance().enableLog();
         mProgressDialog = new ProgressDialog(this);
+        ClientConfig config = new ClientConfig();
+        config.setMaxConcurrentRequest(10);
+        FileUploader.setClientConfig(config);
 
         mHandler = new Handler() {
             @Override
@@ -234,9 +237,11 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 //                    token="db17ab5d18c137f786b67c490187317a0738f94a:Y2I0NzEzMjQ3ZjU3ODNlOTZhMDZjMGNmZjM4NTM2NTYyMzJiZDhlYw==:eyJzY29wZSI6Indjcy1zZGstdGVzdDphYmNkd2FmIiwiZGVhZGxpbmUiOiI0MDcwODgwMDAwMDAwIiwicmV0dXJuQm9keSI6ImJ1Y2tldD0kKGJ1Y2tldCkma2V5PSQoa2V5KSIsIm92ZXJ3cml0ZSI6MSwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
 //自定义返回参数
             token = "db17ab5d18c137f786b67c490187317a0738f94a:ZmM2NmViMjhkM2Q4ZGMyZmYxNThiOWMxZDUyYWU1ZjY0NzIzYzM0NA==:eyJzY29wZSI6Indhbmd3YXlob21lIiwiZGVhZGxpbmUiOiI0MDcwODgwMDAwMDAwIiwicmV0dXJuQm9keSI6Ind3aFRlc3ROYW1lPSQoeDp0ZXN0KSZpcD0kKGlwKSIsIm92ZXJ3cml0ZSI6MSwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";                    //				final String token = "db17ab5d18c137f786b67c490187317a0738f94a:ZjRmM2FiOGY2NGY5YzhmMGFkMzA4MjQ4NDJjZWNjNTllMDNhNzkxOA==:eyJzY29wZSI6ImFwaXRlc3QtbmV0cHJvYmUiLCJkZWFkbGluZSI6IjE1MTQ3NzkyMDAwMDAiLCJvdmVyd3JpdGUiOjAsImZzaXplTGltaXQiOjAsImluc3RhbnQiOjAsInNlcGFyYXRlIjowfQ==";
+
         }
         HashMap<String, String> callbackBody = new HashMap<String, String>();
         callbackBody.put("x:test", "customParams");
+//        callbackBody.put("myurl", "http://abc");//无效
         try {
             FileUploader.upload(MainActivity.this, token, file, callbackBody, new FileUploaderListener() {
 
@@ -339,7 +344,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
                 "eyJzY29wZSI6Indjcy1zZGstdGVzdCIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MCwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
         final String filePath = getCurrentFilePath();
         // "restore.ipsw";
-        Log.i(TAG, "test normal path " + filePath);
+        Log.i(TAG, "test slice path " + filePath);
         final File file = new File(filePath);
         Log.i(TAG, "file exists " + file.exists() + " can read " + file.canRead());
         if (!TextUtils.isEmpty(mTokenEt.getText().toString())) {
@@ -384,13 +389,12 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
     private void sliceUploadJSON() {
 //        String uploadToken = "db17ab5d18c137f786b67c490187317a0738f94a:OTgyMGMxZjA5NmZlMmZjYmZmNDcyM2RhYzVhMGFmNzQ4ZDg3OTkxNw==:eyJzY29wZSI6Ind1eWlrdW46cmVzdG9yZS5pcHN3IiwiZGVhZGxpbmUiOiI0MDcwODgwMDAwMDAwIiwib3ZlcndyaXRlIjoxLCJmc2l6ZUxpbWl0IjowfQ==";
         String uploadToken =
-                "1057f27271aa52b72fc0ff4f507fe63345c114b9:MjMzNWEwMzBiMGVkNWJmODgyZmZhZDQxNTA3ODNhMWQ4NWJkNTQ4Mw==:eyJzY29wZSI6Indjcy1zZGstdGVzdCIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MCwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
-        //wcs-sdk-test的空间token 不带key
+                "1057f27271aa52b72fc0ff4f507fe63345c114b9:MjMzNWEwMzBiMGVkNWJmODgyZmZhZDQxNTA3ODNhMWQ4NWJkNTQ4Mw==:eyJzY29wZSI6Indjcy1zZGstdGVzdCIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MCwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";        //wcs-sdk-test的空间token 不带key
 //        String uploadToken = "1057f27271aa52b72fc0ff4f507fe63345c114b9:MjMzNWEwMzBiMGVkNWJmODgyZmZhZDQxNTA3ODNhMWQ4NWJkNTQ4Mw==:" +
 //            "eyJzY29wZSI6Indjcy1zZGstdGVzdCIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MCwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
         final String filePath = getCurrentFilePath();
         // "restore.ipsw";
-        Log.i(TAG, "test normal path " + filePath);
+        Log.i(TAG, "test slice path " + filePath);
         final File file = new File(filePath);
         Log.i(TAG, "file exists " + file.exists() + " can read " + file.canRead());
         if (!TextUtils.isEmpty(mTokenEt.getText().toString())) {
@@ -471,6 +475,11 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
         }
         return dir;
     }
+
+//    private void copy() {
+//        //把log文件复制到sd的"WcsSdk"文件夹中
+//        Util.copyFile(getFilesDir().getPath(), mFilePath, "wcs-dump.log");
+//    }
 
     private void generateFiles() throws IOException {
         if (getSDFileDir() == null) {

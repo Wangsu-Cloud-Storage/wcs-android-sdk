@@ -8,6 +8,7 @@ import com.chinanetcenter.wcs.android.utils.WCSLogUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.lang.reflect.Field;
@@ -39,13 +40,12 @@ public class Validate  {
         return scope;
     }
 
+    @Test
     public void xtestEnvironment() throws NoSuchFieldException, IllegalAccessException, IllegalArgumentException {
         Field debuggingField = WCSLogUtil.class.getDeclaredField("DEBUGGING");
         debuggingField.setAccessible(true);
         boolean debugging = debuggingField.getBoolean(null);
         Assert.assertFalse(debugging);
-        Assert.assertEquals(Config.PUT_URL, "http://up.wcsapi.biz.matocloud.com:8090");
-//        assertEquals(Config.MGR_URL, "http://mgr.wcsapi.biz.matocloud.com");
     }
 
 }

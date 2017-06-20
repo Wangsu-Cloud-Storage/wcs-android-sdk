@@ -1,5 +1,9 @@
 package com.chinanetcenter.wcs.android.network;
 
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.chinanetcenter.wcs.android.LogRecorder;
 import com.chinanetcenter.wcs.android.entity.OperationMessage;
 import com.chinanetcenter.wcs.android.exception.ClientException;
 import com.chinanetcenter.wcs.android.exception.ServiceException;
@@ -9,11 +13,18 @@ import com.chinanetcenter.wcs.android.internal.WcsProgressCallback;
 import com.chinanetcenter.wcs.android.internal.WcsRetryHandler;
 import com.chinanetcenter.wcs.android.utils.WCSLogUtil;
 
+import org.json.JSONException;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -36,7 +47,7 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
     private OkHttpClient mOkHttpClient;
     private WcsRetryHandler retryHandler;
     private int currentRetryCount;
-
+    private static HashMap<String, String> sIpList;
 
     /**
      * 计算进度
@@ -167,6 +178,7 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
         Response response = null;
         Exception exception = null;
         Call call = null;
+        T result = null;
         try {
             if (mExecutionContext.getCancellationHandler().isCancelled()) {
                 throw new InterruptedIOException("the task is cancelled");
@@ -234,7 +246,9 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
 
             // send request
             response = call.execute();
-            T result = mResponseParser.parse(response);
+            result = mResponseParser.parse(response);
+            dump(url, result);
+
             if (response.isSuccessful()) {
                 if (mExecutionContext.getCompletedCallback() != null) {
                     mExecutionContext.getCompletedCallback().onSuccess(mExecutionContext.getRequest(),
@@ -242,12 +256,13 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
                 }
                 return result;
             } else {
-                exception = new ServiceException(response.code(), result.getRequestId(), result.getResponseJson());
+                exception = new ServiceException(response.code(), result.getRequestId(), result.getResponse());
             }
         } catch (Exception e) {
             if (WCSLogUtil.isEnableLog()) {
                 e.printStackTrace();
             }
+            dump(e);
             exception = new ClientException(e.getMessage(), e);
         } finally {
             mExecutionContext.getCancellationHandler().setFinished(true);
@@ -257,11 +272,6 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
 
         }
 
-        //不需要这么做
-   /*     if (mExecutionContext != null) {
-            //强制转换
-            ((WcsRequest) mExecutionContext.getRequest()).releaseData();
-        }*/
         // reconstruct exception caused by manually cancelling
         if ((call != null && call.isCanceled())
                 || mExecutionContext.getCancellationHandler().isCancelled()) {
@@ -280,7 +290,14 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
         } else {
             OperationMessage operationMessage;
             if (exception instanceof ServiceException) {
-                operationMessage = OperationMessage.fromJsonString(exception.getMessage(), ((ServiceException) exception).getRequestId(), null);
+                try {
+                    operationMessage = OperationMessage.fromJsonString(exception.getMessage(), ((ServiceException) exception).getRequestId(), null);
+                } catch (JSONException e) {
+                    Log.e("CNCLog", "json error : " + exception.getMessage());
+                    String message = String.format("url : %s,\r\n status : %s,\r\n header : %s\r\n",
+                            mParams.getUrl(), result.getStatusCode(), result.getHeaders());
+                    operationMessage = new OperationMessage(0, message);
+                }
             } else {
                 operationMessage = new OperationMessage(0, null, exception);
             }
@@ -293,6 +310,30 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
 
     }
 
+    private void dump(Exception e) {
+        if (!LogRecorder.getInstance().getLock()) {
+            return;
+        }
+        long timestamp = System.currentTimeMillis();
+        String responseIdentifier = String.format("*** time : %s,\r\n *** exception : %s\r\n", timestamp,
+                e.getLocalizedMessage());
+        LogRecorder.getInstance().dumpLog(responseIdentifier);
+    }
+
+    private void dump(String url, WcsResult result) {
+        if (!LogRecorder.getInstance().getLock()) {
+            return;
+        }
+        long timestamp = System.currentTimeMillis();
+        long contentLength = result.getResponse().length();
+        String destIp = getIpByUrl(url);
+        String responseIdentifier = String.format("*** time : %s,\r\n *** destIp : %s,\r\n *** uri : %s,\r\n *** status : %s,\r\n *** length : %s\r\n", timestamp,
+                destIp, url, result.getStatusCode(), contentLength);
+        LogRecorder.getInstance().dumpLog(responseIdentifier);
+        LogRecorder.getInstance().dumpLog(result.getHeaders() + "\n");
+        LogRecorder.getInstance().dumpLog("*** response : " + result.getResponse() + "\n");
+    }
+
     private void addParams(MultipartBody.Builder builder, Map<String, String> params) {
         if (params != null && !params.isEmpty()) {
             for (String key : params.keySet()) {
@@ -301,5 +342,49 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
             }
         }
     }
+
+    private String getIpByUrl(String url) {
+        if (sIpList == null) {
+            sIpList = new HashMap<String, String>();
+        }
+        String urlHost = "";
+        try {
+            URL uploadURL = new URL(url);
+            urlHost = uploadURL.getHost();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        if (TextUtils.isEmpty(urlHost)) {
+            return "0.0.0.0";
+        }
+        String ipString = sIpList.get(urlHost);
+        if (!TextUtils.isEmpty(ipString)) {
+            return ipString;
+        }
+
+        InetAddress addr = null;
+        try {
+            addr = InetAddress.getByName(urlHost);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        if (null == addr) {
+            return "0.0.0.0";
+        }
+
+        byte[] ipParts = addr.getAddress();
+        StringBuffer sb = new StringBuffer();
+        for (byte b : ipParts) {
+            int i = b & 0xFF;
+            sb.append(i + ".");
+        }
+
+        String resolvedIpString = sb.toString();
+        sIpList.put(urlHost, resolvedIpString);
+        return resolvedIpString;
+    }
+
 }
 

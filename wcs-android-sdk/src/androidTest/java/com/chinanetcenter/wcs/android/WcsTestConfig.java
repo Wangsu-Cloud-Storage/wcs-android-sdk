@@ -2,6 +2,7 @@ package com.chinanetcenter.wcs.android;
 
 import android.util.Log;
 
+import com.chinanetcenter.wcs.android.utils.DateUtil;
 import com.chinanetcenter.wcs.android.utils.WetagUtil;
 
 import java.io.File;
@@ -21,12 +22,15 @@ import static android.support.test.InstrumentationRegistry.getContext;
  */
 public class WcsTestConfig {
 
-    private static final String TAG = "WcsTestConfig";
+    public static final String UPLOAD_URL = "http://apitestuser.up0.v1.wcsapi.com";
+    protected static final int WAIT_TIME = 30000;
+    private static final String CALLBACK_URL = "http://callback-test.wcs.biz.matocloud.com:8088/callbackUrl";
+    private static final long TEST_EXPIRED = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
+    private static final String TAG = "CNCLog";
+
     public final static String TOKEN = "db17ab5d18c137f786b67c490187317a0738f94a:NzU1ZGJlNGJlMWY0MTVhZjNmNzZhYzY4ZDExMjIwYTJkMjA1MWNjZg==:eyJzY29wZSI6ImltYWdlczpmZHNmamtkcz09MzIxamtsPSIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MSwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
-    //{"hash":"FhHQrR69bXnu3qXFVdp9AwBgp9qk","response":"{\"url\":\"aHR0cDovL3NwYWNlMS5zLndjczk4LmJpei5tYXRvY2xvdWQuY29tL2ZpbGUxMDBr\",\"fsize\":\"102400\",\"bucket\":\"space1\"}"}
-    //eb33b9b718bc94f0161da1a039e895c19e1b7b24:MzViNGMyNGE2MjY5NGQ3ZjA2OTRhZGFkYjYwYjM0NTAyMTcxYzBkYQ==:eyJzY29wZSI6InNwYWNlMSIsImRlYWRsaW5lIjoiMTQ5ODI4OTc1MDAwMCIsIm92ZXJ3cml0ZSI6MSwiZnNpemVMaW1pdCI6MCwiY2FsbGJhY2tVcmwiOiJodHRwOi8vZGVtby5jb206ODEvY2FsbGJhY2tVcmwiLCJjYWxsYmFja0JvZHkiOiJ1cmw9JCh1cmwpJmZzaXplPSQoZnNpemUpJmJ1Y2tldD0kKGJ1Y2tldCkiLCJpbnN0YW50IjowLCJzZXBhcmF0ZSI6MH0=
-    private static String[] sFileNameArray = {"100k", "200k", "500k", "1m", "4m", "10m", "50m", "100m", "500m"};
-    private static long[] sFileSizeArray = {102400, 204800, 512000, 1024 * 1024, 1024 * 1024 * 4, 1024 * 1024 * 10, 1024 * 1024 * 50, 1024 * 1024 * 100, 1024 * 1024 * 500};
+    public static String[] sFileNameArray = {"100k", "200k", "500k", "1m", "4m", "10m", "50m", "100m", "500m"};
+    public static long[] sFileSizeArray = {102400, 204800, 512000, 1024 * 1024, 1024 * 1024 * 4, 1024 * 1024 * 10, 1024 * 1024 * 50, 1024 * 1024 * 100, 1024 * 1024 * 500};
 
 
     public static void generateFilesAsync() {
@@ -63,4 +67,6 @@ public class WcsTestConfig {
             Log.d(TAG, "Generated File " + filePath + " succeeded.");
         }
     }
+
+
 }

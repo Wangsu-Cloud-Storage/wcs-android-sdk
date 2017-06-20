@@ -34,6 +34,10 @@ public class LogRecorder {
         mLock = false;
     }
 
+    public Boolean getLock() {
+        return mLock;
+    }
+
     public synchronized void dumpLog(String str) {
         synchronized (mLock) {
             if (!mLock) {

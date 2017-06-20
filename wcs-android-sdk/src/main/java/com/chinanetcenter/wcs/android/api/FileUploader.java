@@ -142,6 +142,10 @@ public class FileUploader {
      * @param uploaderListener 上传的回调
      */
     public static void upload(Context context, String token, Uri fileUri, HashMap<String, String> callbackBody, FileUploaderListener uploaderListener) {
+        if (null == fileUri || fileUri.toString().trim().equals("")) {
+            uploaderListener.onFailure(new OperationMessage(-1, "fileUri no exists "));
+            return;
+        }
         upload(context, token, FileUtil.getFile(context, fileUri), callbackBody, uploaderListener);
     }
 
@@ -238,9 +242,10 @@ public class FileUploader {
 
         request.setCallbackParam(params);
         request.setFile(file);
-        dump(context, token, uploadUrlString, file.length(), file.getName());
 
         getInternalRequest(context, sClientConfig).upload(request, uploaderListener, context);
+
+        dump(context, token, uploadUrlString, file.length(), file.getName());
     }
 
     /**
@@ -389,8 +394,9 @@ public class FileUploader {
                     ByteArray tmp = null;
                     try {
                         sem.acquire();
-                        if (!arrayBuffersList.isEmpty())
+                        if (!arrayBuffersList.isEmpty()) {
                             tmp = arrayBuffersList.pop();
+                        }
                         final ByteArray finalTmp = tmp;
                         uploadBlock(context, uploadToken, blocks[finalI], finalI, sliceCache, tag,
                                 progressNotifier, new UploadBlockListener() {
@@ -507,7 +513,7 @@ public class FileUploader {
                 SliceCacheManager.getInstance().removeSliceCache(sliceCache);
 
                 if (null != sliceUploaderListener) {
-                    sliceUploaderListener.onSliceUploadSucceed(BaseApi.parseWCSUploadResponse(result.getResponseJson()));
+                    sliceUploaderListener.onSliceUploadSucceed(BaseApi.parseWCSUploadResponse(result));
                 }
             }
 
@@ -560,9 +566,9 @@ public class FileUploader {
         }
         request.setHeaders(headers);
 
-        dump(context, uploadToken, mergeUrlString, fileSize, "unknown");
-
         getInternalRequest(context, sClientConfig).mergeBlock(tag, request, wcsCompletedCallback, context);
+
+        dump(context, uploadToken, mergeUrlString, fileSize, "unknown");
     }
 
     private static void uploadBlock(final Context context,
@@ -624,9 +630,9 @@ public class FileUploader {
                 }
             });
 
-            dump(context, uploadToken, initBlockUrl, slice.size(), block.getOriginalFileName());
-
             getInternalRequest(context, sClientConfig).uploadBlock(tag, request, wcsCompletedCallback, context);
+
+            dump(context, uploadToken, initBlockUrl, slice.size(), block.getOriginalFileName());
         } else if (null != slice) {
             uploadSlice(tag, context, uploadToken, block, blockIndex, slice,
                     sliceCache, sliceCache.getBlockContext().get(blockIndex), progressNotifier,
@@ -687,9 +693,10 @@ public class FileUploader {
                 progressNotifier.increaseProgressAndNotify(currentSize);
             }
         });
-        dump(context, uploadToken, uploadSliceUrl, slice.size(), block.getOriginalFileName());
 
         getInternalRequest(context, sClientConfig).uploadBlock(tag, request, wcsCompletedCallback, context);
+
+        dump(context, uploadToken, uploadSliceUrl, slice.size(), block.getOriginalFileName());
     }
 
     private static void uploadNextSlice(Object tag, SliceResponse sliceResponse,
@@ -700,7 +707,9 @@ public class FileUploader {
                                         ParamsConf conf) {
         WCSLogUtil.d("block index : " + blockIndex + ";Thread : " + Thread.currentThread().getName() + ";slice index: " + block.getIndex() + "; uploadSlice slice response : " + sliceResponse);
         final Slice lastSlice = block.lastSlice();// 取刚上传的一片
-        if (Crc32.calc(lastSlice.toByteArray()) == sliceResponse.crc32) {
+        if (sliceResponse.crc32 == 0) {
+            uploadBlockListener.onBlockUploadFailured(blockIndex, new OperationMessage(0, "sliceResponse incorrect, " + sliceResponse.getHeaders()));
+        } else if (Crc32.calc(lastSlice.toByteArray()) == sliceResponse.crc32) {
             sliceCache.getBlockContext().set(blockIndex, sliceResponse.context);//ctx
             sliceCache.getBlockUploadedIndex().set(blockIndex, block.getIndex());
             WCSLogUtil.d("uploadSlice correctly. save sliceCache");

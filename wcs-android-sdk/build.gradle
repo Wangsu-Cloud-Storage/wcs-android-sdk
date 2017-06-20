@@ -31,11 +31,11 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:23.0.1'
     testCompile 'junit:junit:4.12'
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
 }
 
 def SDK_BASENAME = "wcs-android-sdk";
-def SDK_VERSION = "_V1.0";
+def SDK_VERSION = "-1.6.2";
 def sdkDestinationPath = "build/outputs";
 def zipFile = file('build/intermediates/bundles/release/classes.jar')
 
