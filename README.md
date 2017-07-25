@@ -74,28 +74,8 @@ Android Studio:
 
 二、服务端开发环境准备 
 
-在工程中引入SDK的wcs-java-sdk-x.x.x.jar包，和wcs-java-sdk-x.x.x-dependencies.zip文件中解压出来的第三方jar包（以eclipse为例） 
-![服务端开发环境准备](https://wcs.chinanetcenter.com/indexNew/image/wcs/wcs-android-sdk4.png)
+服务端开发环境请参考wcs-Java-SDK: https://github.com/Wangsu-Cloud-Storage/wcs-java-sdk
 
-
-#### 配置信息
-
-用户接入网宿云存储时，需要使用一对有效的AK和SK进行签名认证，并填写“上传域名”进行文件上传。配置信息只需要在整个应用程序中初始化一次即可，具体操作如下：
-
-&emsp;&emsp;开通网宿云存储平台账户
-
-&emsp;&emsp;登录网宿云存储平台，在“安全管理”下的“密钥管理”查看AK和SK，“域名查询”查看上传、管理域名。
-
-在获取到AK和SK等信息之后，您可以按照如下方式进行信息初始化：
-
-```java
-import com.chinanetcenter.api.util.Config;
-//1.初始化AK&SK信息
-String ak = "your access key";
-String sk = "your secrete key";
-String PUT_URL = "your uploadDomain";
-Config.init(ak,sk,PUT_URL,"");
-```
 #### 初始化
 
 初始化主要完成upload domain设置、Client参数配置（可选）-分片上传并发数、响应超时时间、连接超时时间、重试次数。
@@ -157,31 +137,7 @@ private void uploadFile(File srcFile) {
     }
 ```
 
-服务端代码（生成上传凭证）：
-
-```java
-import com.chinanetcenter.api.domain.PutPolicy;
-import com.chinanetcenter.api.util.DateUtil;
-import com.chinanetcenter.api.util.TokenUtil;
-import com.chinanetcenter.api.util.Config;
-
-    ......
-
-    public String uploadToken() {
-//初始化AK&SK信息
-        String ak = "your access key";
-        String sk = "your secrete key";
-        Config.init(ak, sk);
-        PutPolicy putPolicy = new PutPolicy();
-        //设置scope（空间:文件名）
-        putPolicy.setScope("viptest:sz1001");
-        //设置请求过期时间
-        long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
-        putPolicy.setDeadline(String.valueOf(time));
-        String uploadToken = TokenUtil.getUploadToken(putPolicy);
-        return uploadToken;
-    }
-```
+服务端生成普通上传凭证： [参考上传凭证说明](https://wcs.chinanetcenter.com/document/API/Token/UploadToken)
 
 2.回调上传（POST方式） 
 
@@ -226,35 +182,7 @@ private void uploadFile(File srcFile) {
     }
 ```
 
-服务端代码（生成上传凭证）：
-
-```java
-import com.chinanetcenter.api.domain.PutPolicy;
-import com.chinanetcenter.api.util.DateUtil;
-import com.chinanetcenter.api.util.TokenUtil;
-import com.chinanetcenter.api.util.Config;
-
-    ......
-
-    public String uploadToken() {
-//初始化AK&SK信息
-        String ak = "your access key";
-        String sk = "your secrete key";
-        Config.init(ak, sk);
-        PutPolicy putPolicy = new PutPolicy();
-        //设置scope（空间:文件名）
-        putPolicy.setScope("viptest:sz1001");
-        //设置请求过期时间
-        long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
-        putPolicy.setDeadline(String.valueOf(time));
-        //设置回调URL
-        putPolicy.setCallbackUrl(callbackUrl);
-        //设置回调信息格式（如果不想自定义格式，该处设置为NULL即可）
-        putPolicy.setCallbackBody(callbackBody);
-        String uploadToken = TokenUtil.getUploadToken(putPolicy);
-        return uploadToken;
-    }
-```
+服务端生成回调上传凭证： [参考上传凭证说明](https://wcs.chinanetcenter.com/document/API/Token/UploadToken)
 
 3.通知上传 (POST方式) 
 
@@ -295,35 +223,7 @@ private void uploadFile(File srcFile) {
     }
 ```
 
-服务端代码（生成上传凭证）：
-
-```java
-import com.chinanetcenter.api.domain.PutPolicy;
-import com.chinanetcenter.api.util.DateUtil;
-import com.chinanetcenter.api.util.TokenUtil;
-import com.chinanetcenter.api.util.Config;
-
-    ......
-
-    public String uploadToken() {
-//初始化AK&SK信息
-        String ak = "your access key";
-        String sk = "your secrete key";
-        Config.init(ak, sk);
-        PutPolicy putPolicy = new PutPolicy();
-        //设置scope（空间:文件名）
-        putPolicy.setScope("viptest:sz1001");
-        //设置请求过期时间
-        long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
-        putPolicy.setDeadline(String.valueOf(time));
-        //设置异步数据处理指令（参考附录一的处理指令介绍-目前支持视频类的异步处理，如果不需要异步处理，不建议使用该方式做上传）
-        putPolicy.setPersistentOps(cmd); 
-        //设置异步处理后回调的URL
-        putPolicy.setPersistentNotifyUrl(notifyUrl); 
-String uploadToken = TokenUtil.getUploadToken(putPolicy);
-        return uploadToken;
-    }
-```
+服务端生成通知上传凭证： [参考上传凭证说明](https://wcs.chinanetcenter.com/document/API/Token/UploadToken)
 
 4.分片上传（POST方式） 
 
@@ -363,32 +263,4 @@ Log.d("CNCLog", String.format(Locale.CHINA, "uploaded : %s, total : %s", uploade
 });
 ```
 
-服务端代码：
-
-```java
-import com.chinanetcenter.api.domain.PutPolicy;
-import com.chinanetcenter.api.util.DateUtil;
-import com.chinanetcenter.api.util.TokenUtil;
-import com.chinanetcenter.api.util.Config;
-
-    ......
-
-    public String uploadToken() {
-//初始化AK&SK信息
-        String ak = "your access key";
-        String sk = "your secrete key";
-        Config.init(ak, sk);
-        PutPolicy putPolicy = new PutPolicy();
-        //设置scope（空间:文件名）
-        putPolicy.setScope("viptest:sz1001");
-        //设置请求过期时间
-        long time = DateUtil.parseDate("2099-01-01 00:00:00", DateUtil.COMMON_PATTERN).getTime();
-        putPolicy.setDeadline(String.valueOf(time));
-        //设置异步数据处理指令（参考附录一的处理指令介绍-目前支持视频类的异步处理，如果不需要异步处理，不建议使用该方式做上传）
-        putPolicy.setPersistentOps(cmd); 
-        //设置异步处理后回调的URL
-        putPolicy.setPersistentNotifyUrl(notifyUrl); 
-String uploadToken = TokenUtil.getUploadToken(putPolicy);
-        return uploadToken;
-    }
-```
+服务端生成分片上传凭证： [参考上传凭证说明](https://wcs.chinanetcenter.com/document/API/Token/UploadToken)
