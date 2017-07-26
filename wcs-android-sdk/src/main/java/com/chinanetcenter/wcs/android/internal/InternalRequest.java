@@ -74,6 +74,23 @@ public class InternalRequest {
         requestMap = new WeakHashMap<Context, List<CancellationHandler>>();
     }
 
+    public WcsAsyncTask<WcsResult> get(
+            WcsRequest request,
+            WcsCompletedCallback<WcsRequest, WcsResult> completedCallback) {
+
+        ExecutionContext<WcsRequest> executionContext =
+                new ExecutionContext<>(innerClient, request);
+
+        if (completedCallback != null) {
+            executionContext.setCompletedCallback(completedCallback);
+        }
+
+        ResponseParser<WcsResult> parser = new ResponseParsers.BaseResponseParser();
+        Callable<WcsResult> callable = new WcsRequestTask<>(request, parser, executionContext, maxRetryCount);
+
+        return sendRequest(executionContext, callable, null, null);
+    }
+
     public WcsAsyncTask<UploadFileResult> upload(
             UploadFileRequest request,
             WcsCompletedCallback<UploadFileRequest, UploadFileResult> completedCallback, Context context) {

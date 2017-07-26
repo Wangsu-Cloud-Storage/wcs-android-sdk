@@ -99,6 +99,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
         mFileSizeSp = (Spinner) findViewById(R.id.file_size_sp);
         setSpAdapter();
         init();
+
     }
 
     private void setSpAdapter() {
@@ -150,7 +151,6 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
         }
     }
 
-
     private void initParams() {
         conf = new ParamsConf();
 
@@ -159,8 +159,6 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
         conf.mimeType = TextUtils.isEmpty(mMimeTypeEt.getText().toString()) ? "" : mMimeTypeEt.getText().toString();
         FileUploader.setParams(conf);
         FileUploader.setBlockConfigs(TextUtils.isEmpty(mBlockEt.getText().toString()) ? 0 : Integer.valueOf(mBlockEt.getText().toString()), TextUtils.isEmpty(mSliceEt.getText().toString()) ? 0 : Integer.valueOf(mSliceEt.getText().toString()));
-        FileUploader.setUploadUrl(mBaseUrlEt.getText().toString().trim());
-//        FileUploader.setUploadUrl(TextUtils.isEmpty(mBaseUrlEt.getText().toString().trim())?"http://apitestuser.up0.v1.wcsapi.com":mBaseUrlEt.getText().toString().trim());
     }
 
     private void showLoadingDialog() {
@@ -171,7 +169,6 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
             mProgressDialog = new ProgressDialog(MainActivity.this);
             mProgressDialog.setMessage("等待中...");
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//        mProgressDialog.setProgress(0);
             mProgressDialog.setCancelable(true);
             mProgressDialog.setIndeterminate(true);
         }
@@ -190,6 +187,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
         ClientConfig config = new ClientConfig();
         config.setMaxConcurrentRequest(10);
         FileUploader.setClientConfig(config);
+//        FileUploader.setUploadUrl(mBaseUrlEt.getText().toString().trim());
+        FileUploader.setUploadUrl("http://wcs-sdk-test.up0.v1.wcsapi.com");
 
         mHandler = new Handler() {
             @Override
@@ -207,18 +206,18 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
                         break;
                     case GENERATE_SUCCESSFULLY:
                         mDisplayTv.setText((String) msg.obj);
+                        mDisplaySv.fullScroll(ScrollView.FOCUS_DOWN);
                         dismissLoadingDialog();
-                        setSpAdapter();
                         break;
                     case GENERATE_FAILED:
                         mDisplayTv.setText((String) msg.obj);
+                        mDisplaySv.fullScroll(ScrollView.FOCUS_DOWN);
                         dismissLoadingDialog();
                         break;
                 }
             }
         };
     }
-
 
     private void normalUploadJson() {
 
@@ -454,6 +453,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
     }
 
 
+
     private String getCurrentFilePath() {
         return mFilePath + File.separator + mFileSizeSp.getSelectedItem();
     }
@@ -476,10 +476,6 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
         return dir;
     }
 
-//    private void copy() {
-//        //把log文件复制到sd的"WcsSdk"文件夹中
-//        Util.copyFile(getFilesDir().getPath(), mFilePath, "wcs-dump.log");
-//    }
 
     private void generateFiles() throws IOException {
         if (getSDFileDir() == null) {
@@ -522,5 +518,4 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
         }
         setSpAdapter();
     }
-
 }

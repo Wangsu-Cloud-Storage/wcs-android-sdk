@@ -180,7 +180,7 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
         Call call = null;
         T result = null;
         try {
-            if (mExecutionContext.getCancellationHandler().isCancelled()) {
+            if (mExecutionContext.getCancellationHandler() != null && mExecutionContext.getCancellationHandler().isCancelled()) {
                 throw new InterruptedIOException("the task is cancelled");
             }
 
@@ -188,6 +188,7 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
 
             // build request url
             String url = mParams.getUrl();
+            WCSLogUtil.i("url: " + mParams.getUrl());
             requestBuilder = requestBuilder.url(url);
             // set request headers
             for (String key : mParams.getHeaders().keySet()) {
@@ -230,6 +231,7 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
 
                 case GET:
                     requestBuilder = requestBuilder.get();
+                    break;
                 case HEAD:
                     requestBuilder = requestBuilder.head();
                     break;
@@ -242,7 +244,9 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
             }
             request = requestBuilder.build();
             call = mOkHttpClient.newCall(request);
-            mExecutionContext.getCancellationHandler().setCall(call);
+            if (mExecutionContext.getCancellationHandler() != null) {
+                mExecutionContext.getCancellationHandler().setCall(call);
+            }
 
             // send request
             response = call.execute();
@@ -265,7 +269,9 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
             dump(e);
             exception = new ClientException(e.getMessage(), e);
         } finally {
-            mExecutionContext.getCancellationHandler().setFinished(true);
+            if (mExecutionContext.getCancellationHandler() != null) {
+                mExecutionContext.getCancellationHandler().setFinished(true);
+            }
             if (response != null) {
                 response.close();
             }
@@ -274,7 +280,7 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
 
         // reconstruct exception caused by manually cancelling
         if ((call != null && call.isCanceled())
-                || mExecutionContext.getCancellationHandler().isCancelled()) {
+                || (mExecutionContext.getCancellationHandler() != null && mExecutionContext.getCancellationHandler().isCancelled())) {
             exception = new ClientException("Task is cancelled!", exception.getCause(), true);
         }
         boolean shouldRetry = this.retryHandler.shouldRetry(exception, currentRetryCount);

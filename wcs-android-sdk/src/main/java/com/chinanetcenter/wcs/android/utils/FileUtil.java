@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public class FileUtil {
 
@@ -28,7 +29,7 @@ public class FileUtil {
             String filePath;
             if (uri != null && "content".equals(uri.getScheme())) {
                 Cursor cursor = context.getContentResolver().query(uri, new String[]{
-                    android.provider.MediaStore.Images.ImageColumns.DATA
+                        android.provider.MediaStore.Images.ImageColumns.DATA
                 }, null, null, null);
                 cursor.moveToFirst();
                 filePath = cursor.getString(0);
@@ -73,6 +74,38 @@ public class FileUtil {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 执行拷贝任务
+     *
+     * @param asset 需要拷贝的assets文件路径
+     * @return 拷贝成功后的目标文件句柄
+     * @throws IOException
+     */
+    public static File copyFromAsset(String asset, Context context,String destinationPath) throws IOException {
+
+        InputStream source = context.getAssets().open(asset);
+
+        File destinationFile = new File(destinationPath, asset);
+        destinationFile.getParentFile().mkdirs();
+        OutputStream destination = new FileOutputStream(destinationFile);
+        byte[] buffer = new byte[1024];
+        int nread;
+
+        while ((nread = source.read(buffer)) != -1) {
+            if (nread == 0) {
+                nread = source.read();
+                if (nread < 0)
+                    break;
+                destination.write(nread);
+                continue;
+            }
+            destination.write(buffer, 0, nread);
+        }
+        destination.close();
+
+        return destinationFile;
     }
 
     /**

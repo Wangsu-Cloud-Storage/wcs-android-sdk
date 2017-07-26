@@ -44,7 +44,9 @@ task deleteBuild(type: Delete) {
     delete sdkDestinationPath + SDK_BASENAME + SDK_VERSION + ".jar"
 }
 
-
+/**
+ * gradlew makeJar
+ */
 task makeJar(type: Jar) {
     from zipTree(zipFile)
     //打包加入源码

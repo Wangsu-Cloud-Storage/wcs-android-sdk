@@ -33,7 +33,9 @@ public class BaseApi {
             if (null == mInternalRequest) {
                 mInternalRequest = new InternalRequest(config == null ? ClientConfig.getDefaultConf() : config);
             }
-            LogRecorder.getInstance().setup(context.getApplicationContext());
+            if (context != null) {
+                LogRecorder.getInstance().setup(context.getApplicationContext());
+            }
         }
         return mInternalRequest;
     }

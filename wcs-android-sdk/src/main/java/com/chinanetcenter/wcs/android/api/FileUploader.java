@@ -15,9 +15,11 @@ import com.chinanetcenter.wcs.android.internal.SliceUploadRequest;
 import com.chinanetcenter.wcs.android.internal.UploadFileRequest;
 import com.chinanetcenter.wcs.android.internal.WcsCompletedCallback;
 import com.chinanetcenter.wcs.android.internal.WcsProgressCallback;
+import com.chinanetcenter.wcs.android.listener.FileStringListener;
 import com.chinanetcenter.wcs.android.listener.FileUploaderListener;
 import com.chinanetcenter.wcs.android.listener.FileUploaderStringListener;
 import com.chinanetcenter.wcs.android.listener.SliceUploaderListener;
+import com.chinanetcenter.wcs.android.network.HttpHeaders;
 import com.chinanetcenter.wcs.android.network.HttpMethod;
 import com.chinanetcenter.wcs.android.network.WcsRequest;
 import com.chinanetcenter.wcs.android.network.WcsResult;
@@ -148,6 +150,74 @@ public class FileUploader {
         }
         upload(context, token, FileUtil.getFile(context, fileUri), callbackBody, uploaderListener);
     }
+
+    public static void getToken(TokenParams tokenParams, FileStringListener listener) {
+        if (null == tokenParams || TextUtils.isEmpty(tokenParams.userId) || TextUtils.isEmpty(tokenParams.token) || TextUtils.isEmpty(tokenParams.fileName) || TextUtils.isEmpty(tokenParams.filePath)) {
+            if (listener != null) {
+                listener.onFailure(new OperationMessage(-1, "param invalidate"));
+            }
+            WCSLogUtil.e("param invalidate");
+            return;
+        }
+        File file = new File(tokenParams.filePath);
+        if (!file.canRead()) {
+            if (listener != null) {
+                listener.onFailure(new OperationMessage(-1, "file access denied."));
+            }
+            WCSLogUtil.e("file access denied.");
+            return;
+        }
+        WcsRequest request = new WcsRequest();
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", tokenParams.userId);
+        params.put("token", tokenParams.token);
+        params.put("timeStamp", (int) (System.currentTimeMillis() / 1000));
+        params.put("originFileName", tokenParams.fileName);
+        params.put("fileMd5", EncodeUtils.MD5(tokenParams.filePath));
+        params.put("originFileSize", file.length());
+        if (!TextUtils.isEmpty(tokenParams.domain)) {
+            params.put("domain", tokenParams.domain);
+        }
+        if (!TextUtils.isEmpty(tokenParams.cmd)) {
+            params.put("cmd", tokenParams.cmd);
+        }
+        if (!TextUtils.isEmpty(tokenParams.overwrite)) {
+            params.put("overwrite", tokenParams.overwrite);
+        }
+        if (!TextUtils.isEmpty(tokenParams.videoSource)) {
+            params.put("videoSource", tokenParams.videoSource);
+        }
+
+        request.setMethod(HttpMethod.GET);
+
+        //增加头部请求
+        Map<String, String> headers = new HashMap<>();
+        headers.put(HttpHeaders.CACHE_CONTROL, "no-cache");
+        headers.put(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        request.setHeaders(headers);
+
+        String url = "http://api.cloudv.haplat.net/vod/videoManage/getUploadToken";
+
+        request.setUrl(addQueryParameter(url, params));
+
+        getInternalRequest(null, sClientConfig).get(request, listener);
+    }
+
+    private static String addQueryParameter(String url, Map<String, Object> params) {
+        if (params == null) {
+            return url;
+        }
+        StringBuilder sd = new StringBuilder(url + "?");
+
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            sd.append(entry.getKey())
+                    .append("=")
+                    .append(entry.getValue()).append("&");
+        }
+        sd.setLength(sd.length() - 1);
+        return sd.toString();
+    }
+
 
     /**
      * 上传文件到网宿云存储
@@ -712,7 +782,7 @@ public class FileUploader {
         } else if (Crc32.calc(lastSlice.toByteArray()) == sliceResponse.crc32) {
             sliceCache.getBlockContext().set(blockIndex, sliceResponse.context);//ctx
             sliceCache.getBlockUploadedIndex().set(blockIndex, block.getIndex());
-            WCSLogUtil.d("uploadSlice correctly. save sliceCache");
+            WCSLogUtil.d("uploadSlice correctly. save sliceCache" + " .block index : " + blockIndex + ";slice index: " + block.getIndex());
             Slice nextSlice = block.moveToNext();
             if (null != nextSlice) {
                 uploadSlice(tag, context, uploadToken, block, blockIndex, nextSlice, sliceCache,
@@ -723,11 +793,11 @@ public class FileUploader {
             }
         } else {
             //重传
-            //因为服务端已经接收过该片，offset已经变成下一片的了，重传该片报错：
-            //上传片（bput）	401	nextChunkOffset is not correct	ctx信息不正确，未找到当前片的起始偏移位置
+            //crc32不一致，重新上传，使用之前的offset和context
+            WCSLogUtil.d("crc32 incorrect,retry");
             progressNotifier.decreaseProgress(lastSlice.toByteArray().length);
             uploadSlice(tag, context, uploadToken, block, blockIndex, lastSlice,
-                    sliceCache, sliceResponse.context, progressNotifier, uploadBlockListener, conf);
+                    sliceCache, sliceCache.getBlockContext().get(blockIndex), progressNotifier, uploadBlockListener, conf);
         }
         SliceCacheManager.getInstance().dumpAll();
     }
