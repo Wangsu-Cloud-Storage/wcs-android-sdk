@@ -135,24 +135,13 @@ public class FileUploader {
 
 
     /**
-     * 上传文件到网宿云存储
+     * 获取token
      *
-     * @param context          当前上下文
-     * @param token            上传文件所需要的凭证
-     * @param fileUri          要上传的文件的URI
-     * @param callbackBody     自定义参数及callbackBody，没有则传空
-     * @param uploaderListener 上传的回调
+     * @param tokenParams 上传接口所需参数
+     * @param listener    回调
      */
-    public static void upload(Context context, String token, Uri fileUri, HashMap<String, String> callbackBody, FileUploaderListener uploaderListener) {
-        if (null == fileUri || fileUri.toString().trim().equals("")) {
-            uploaderListener.onFailure(new OperationMessage(-1, "fileUri no exists "));
-            return;
-        }
-        upload(context, token, FileUtil.getFile(context, fileUri), callbackBody, uploaderListener);
-    }
-
     public static void getToken(TokenParams tokenParams, FileStringListener listener) {
-        if (null == tokenParams || TextUtils.isEmpty(tokenParams.userId) || TextUtils.isEmpty(tokenParams.token) || TextUtils.isEmpty(tokenParams.fileName) || TextUtils.isEmpty(tokenParams.filePath)) {
+        if (null == tokenParams || TextUtils.isEmpty(tokenParams.userId) || TextUtils.isEmpty(tokenParams.token) || tokenParams.timeStamp == 0 || TextUtils.isEmpty(tokenParams.fileName) || TextUtils.isEmpty(tokenParams.filePath)) {
             if (listener != null) {
                 listener.onFailure(new OperationMessage(-1, "param invalidate"));
             }
@@ -171,7 +160,7 @@ public class FileUploader {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", tokenParams.userId);
         params.put("token", tokenParams.token);
-        params.put("timeStamp", (int) (System.currentTimeMillis() / 1000));
+        params.put("timeStamp", tokenParams.timeStamp);
         params.put("originFileName", tokenParams.fileName);
         params.put("fileMd5", EncodeUtils.MD5(tokenParams.filePath));
         params.put("originFileSize", file.length());
@@ -218,10 +207,25 @@ public class FileUploader {
         return sd.toString();
     }
 
-
     /**
      * 上传文件到网宿云存储
      *
+     * @param context          当前上下文
+     * @param token            上传文件所需要的凭证
+     * @param fileUri          要上传的文件的URI
+     * @param callbackBody     自定义参数及callbackBody，没有则传空
+     * @param uploaderListener 上传的回调
+     */
+    public static void upload(Context context, String token, Uri fileUri, HashMap<String, String> callbackBody, FileUploaderListener uploaderListener) {
+        if (null == fileUri || fileUri.toString().trim().equals("")) {
+            uploaderListener.onFailure(new OperationMessage(-1, "fileUri no exists "));
+            return;
+        }
+        upload(context, token, FileUtil.getFile(context, fileUri), callbackBody, uploaderListener);
+    }
+
+    /**
+     * @param context          当前上下文
      * @param token            上传文件所需要的凭证
      * @param filePath         要上传文件的路径
      * @param callbackBody     自定义参数及callbackBody，没有则传空
@@ -238,6 +242,7 @@ public class FileUploader {
     /**
      * 上传文件到网宿云存储
      *
+     * @param context          当前上下文
      * @param token            上传文件所需要的凭证
      * @param file             要上传的文件
      * @param callbackBody     自定义参数及callbackBody，没有则传空
@@ -248,13 +253,13 @@ public class FileUploader {
     }
 
     /**
-     * 异步实现的普通文件上传
+     * 上传文件到网宿云存储
      *
-     * @param context
-     * @param token
-     * @param file
-     * @param callbackBody
-     * @param uploaderListener
+     * @param context          当前上下文
+     * @param token            上传文件所需要的凭证
+     * @param file             要上传的文件
+     * @param callbackBody     自定义参数及callbackBody，没有则传空
+     * @param uploaderListener 上传的回调
      */
     public static void upload(final Context context, final String token,
                               final File file, final HashMap<String, String> callbackBody,
@@ -377,6 +382,14 @@ public class FileUploader {
 
     /**
      * 异步实现的分片上传
+     *
+     * @param tag                   用于标记分片上传，可取任意值(比如说文件名),只对取消产生影响，不想使用可置为null
+     * @param context               上下文
+     * @param uploadToken           上传token
+     * @param file                  待上传文件
+     * @param callbackBody          定制返回给客户端的信息格式
+     *                              详见https://wcs.chinanetcenter.com/document/API/Token/PutPolicy/callback
+     * @param sliceUploaderListener 分片上传回调
      */
     public static void sliceUpload(final String tag, final Context context, final String uploadToken,
                                    final File file, final HashMap<String, String> callbackBody,
@@ -523,7 +536,11 @@ public class FileUploader {
         }
     }
 
-
+    /**
+     * @param blocks     块数组
+     * @param sliceCache
+     * @return 已上传文件大小
+     */
     private static long getUploadedSize(Block[] blocks, SliceCache sliceCache) {
         long allUploadedSize = 0;
         for (int i = 0; i < sliceCache.getBlockUploadedIndex().size(); i++) {
@@ -537,6 +554,11 @@ public class FileUploader {
         return allUploadedSize;
     }
 
+    /**
+     * @param fileHash
+     * @param blocks
+     * @return 缓存的块和片的信息
+     */
     private static SliceCache getSliceCache(String fileHash, Block[] blocks) {
         SliceCache sliceCache = SliceCacheManager.getInstance().getSliceCache(fileHash);
         long sliceSize = blocks[0].getSliceSize();
@@ -569,6 +591,19 @@ public class FileUploader {
         return sliceCache;
     }
 
+    /**
+     * 将上传好的所有数据块按指定顺序合并成一个资源文件
+     *
+     * @param tag                   用于标记分片上传，可取任意值(比如说文件名),只对取消产生影响，不想使用可置为null
+     * @param context               上下文
+     * @param uploadToken           上传token
+     * @param fileSize              文件大小
+     * @param sliceCache            缓存的块和片的信息
+     * @param contextList           块级上传控制信息列表
+     * @param customParams          定制返回给客户端的信息格式
+     * @param sliceUploaderListener 分片上传回调
+     * @param conf                  一些自定义参数
+     */
     private static void mergeBlock(final Object tag, final Context context,
                                    final String uploadToken, final long fileSize,
                                    final SliceCache sliceCache, String contextList,
@@ -641,6 +676,20 @@ public class FileUploader {
         dump(context, uploadToken, mergeUrlString, fileSize, "unknown");
     }
 
+    /**
+     * 上传块
+     *
+     * @param context             上下文
+     * @param uploadToken         上传token
+     * @param block               块
+     * @param blockIndex          块的索引
+     * @param sliceCache          缓存的块和片的信息
+     * @param tag                 用于标记分片上传，可取任意值(比如说文件名),只对取消产生影响，不想使用可置为null
+     * @param progressNotifier    进度提示
+     * @param uploadBlockListener 块上传回调
+     * @param byteArray           存放当前片
+     * @param conf                一些自定义参数
+     */
     private static void uploadBlock(final Context context,
                                     final String uploadToken, final Block block, final int blockIndex,
                                     final SliceCache sliceCache,
@@ -713,7 +762,21 @@ public class FileUploader {
         }
     }
 
-
+    /**
+     * 上传指定块的一片数据，具体数据量可根据现场环境调整。同一块的每片数据必须串行上传。
+     *
+     * @param tag                 用于标记分片上传，可取任意值(比如说文件名),只对取消产生影响，不想使用可置为null
+     * @param context             上下文
+     * @param uploadToken         上传token
+     * @param block               块
+     * @param blockIndex          块的索引
+     * @param slice               片
+     * @param sliceCache          缓存的块和片的信息
+     * @param blockContext        块级上传控制信息
+     * @param progressNotifier    进度提示
+     * @param uploadBlockListener 块上传回调
+     * @param conf                一些自定义参数
+     */
     private static void uploadSlice(final Object tag, final Context context,
                                     final String uploadToken, final Block block, final int blockIndex,
                                     final Slice slice, final SliceCache sliceCache, String blockContext,
@@ -769,6 +832,9 @@ public class FileUploader {
         dump(context, uploadToken, uploadSliceUrl, slice.size(), block.getOriginalFileName());
     }
 
+    /**
+     * 根据返回的片信息，验证上传的片是否完整，是则继续下一片，否则重传
+     */
     private static void uploadNextSlice(Object tag, SliceResponse sliceResponse,
                                         int blockIndex,
                                         Block block, Context context, String uploadToken,
@@ -845,6 +911,15 @@ public class FileUploader {
         return scope;
     }
 
+    /**
+     * 打印日志
+     *
+     * @param context
+     * @param token
+     * @param urlString
+     * @param length
+     * @param fileName
+     */
     private static void dump(Context context, String token, String urlString,
                              long length, String fileName) {
 //        String userAgent = HttpProtocolParams.getUserAgent(getAsyncClient(context).getHttpClient().getParams());

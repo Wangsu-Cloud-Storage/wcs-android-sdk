@@ -23,6 +23,11 @@ public class TokenParams {
     public String token;
 
     /**
+     * 时间戳，用于校验token
+     */
+    public int timeStamp;
+
+    /**
      * 上传文件路径
      */
     public String filePath;
