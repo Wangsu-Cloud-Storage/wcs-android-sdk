@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.chinanetcenter.wcs.android.ClientConfig;
+import com.chinanetcenter.wcs.android.Config;
 import com.chinanetcenter.wcs.android.LogRecorder;
 import com.chinanetcenter.wcs.android.api.FileUploader;
 import com.chinanetcenter.wcs.android.api.ParamsConf;
@@ -152,6 +153,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
     }
 
     private void initParams() {
+        FileUploader.setUploadUrl(mBaseUrlEt.getText().toString().trim());
+
         conf = new ParamsConf();
 
         conf.fileName = TextUtils.isEmpty(mFilenameEt.getText().toString()) ? "" : mFilenameEt.getText().toString();
@@ -182,12 +185,12 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
     }
 
     private void init() {
+        Config.DEBUGGING = true;
         LogRecorder.getInstance().enableLog();
         mProgressDialog = new ProgressDialog(this);
         ClientConfig config = new ClientConfig();
         config.setMaxConcurrentRequest(10);
         FileUploader.setClientConfig(config);
-        FileUploader.setUploadUrl(mBaseUrlEt.getText().toString().trim());
 
         mHandler = new Handler() {
             @Override
@@ -450,7 +453,6 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
             }
         }).start();
     }
-
 
 
     private String getCurrentFilePath() {

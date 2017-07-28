@@ -3,6 +3,7 @@ package com.chinanetcenter.wcs.android.network;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.chinanetcenter.wcs.android.Config;
 import com.chinanetcenter.wcs.android.LogRecorder;
 import com.chinanetcenter.wcs.android.entity.OperationMessage;
 import com.chinanetcenter.wcs.android.exception.ClientException;
@@ -194,6 +195,9 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
             for (String key : mParams.getHeaders().keySet()) {
                 requestBuilder = requestBuilder.addHeader(key, mParams.getHeaders().get(key));
             }
+            //替换UA为wcs-android-sdk-1.6.3,方便确定请求从哪里发出来
+            requestBuilder.header("User-Agent",
+                    String.format("wcs-android-sdk-%s", Config.VERSION));
             String contentType = mParams.getHeaders().get(HttpHeaders.CONTENT_TYPE);
             switch (mParams.getMethod()) {
                 case PUT:
@@ -263,9 +267,7 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
                 exception = new ServiceException(response.code(), result.getRequestId(), result.getResponse());
             }
         } catch (Exception e) {
-            if (WCSLogUtil.isEnableLog()) {
-                e.printStackTrace();
-            }
+            WCSLogUtil.e(e.toString());
             dump(e);
             exception = new ClientException(e.getMessage(), e);
         } finally {
@@ -297,7 +299,7 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
             OperationMessage operationMessage;
             if (exception instanceof ServiceException) {
                 try {
-                    operationMessage = OperationMessage.fromJsonString(exception.getMessage(), ((ServiceException) exception).getRequestId(), null);
+                    operationMessage = OperationMessage.fromJsonString(exception.getMessage(), ((ServiceException) exception).getRequestId());
                 } catch (JSONException e) {
                     Log.e("CNCLog", "json error : " + exception.getMessage());
                     String message = String.format("url : %s,\r\n status : %s,\r\n header : %s\r\n",
@@ -305,7 +307,7 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
                     operationMessage = new OperationMessage(0, message);
                 }
             } else {
-                operationMessage = new OperationMessage(0, null, exception);
+                operationMessage = new OperationMessage(exception);
             }
             if (mExecutionContext.getCompletedCallback() != null) {
                 mExecutionContext.getCompletedCallback().onFailure(mExecutionContext.getRequest(),

@@ -65,7 +65,7 @@ public class Block {
         try {
             fileSize = randomAccessFile.length();
         } catch (IOException e) {
-            e.printStackTrace();
+            WCSLogUtil.e(e.getMessage());
         }
         if (fileSize == 0) {
             try {

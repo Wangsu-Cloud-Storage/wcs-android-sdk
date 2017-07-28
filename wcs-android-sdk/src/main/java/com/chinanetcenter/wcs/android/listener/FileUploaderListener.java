@@ -1,7 +1,9 @@
 package com.chinanetcenter.wcs.android.listener;
 
 import com.chinanetcenter.wcs.android.api.BaseApi;
+import com.chinanetcenter.wcs.android.entity.OperationMessage;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -10,7 +12,11 @@ import org.json.JSONObject;
 public abstract class FileUploaderListener extends FileUploaderStringListener {
 
     public final void onSuccess(int status, String responseString) {
-        onSuccess(status, BaseApi.parseWCSUploadResponse(result));
+        try {
+            onSuccess(status, BaseApi.parseWCSUploadResponse(result));
+        } catch (JSONException e) {
+            onFailure(new OperationMessage(0, e.getMessage()));
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package com.chinanetcenter.wcs.android.entity;
 import android.text.TextUtils;
 
 import com.chinanetcenter.wcs.android.network.WcsResult;
+import com.chinanetcenter.wcs.android.utils.WCSLogUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,7 +57,7 @@ public class SliceResponse extends WcsResult {
                 sliceResponse.crc32 = jsonObject.optLong("crc32", 0);
                 sliceResponse.md5 = jsonObject.optString("checksum", "0");
             } catch (JSONException e) {
-                e.printStackTrace();
+                WCSLogUtil.e(e.getMessage());
             }
         }
     }

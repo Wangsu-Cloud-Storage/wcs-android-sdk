@@ -5,6 +5,10 @@ import android.support.annotation.NonNull;
 import com.chinanetcenter.wcs.android.entity.SliceResponse;
 import com.chinanetcenter.wcs.android.network.ResponseParser;
 import com.chinanetcenter.wcs.android.network.WcsResult;
+import com.chinanetcenter.wcs.android.utils.WCSLogUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -44,7 +48,21 @@ public class ResponseParsers {
         if (!response.isSuccessful()) {
             result.setRequestId(responseHeader.get(WcsResult.REQUEST_ID));
         }
-        result.setResponse(response.body() == null ? "" : parseResponse(response.body().byteStream()));
+        String data;
+        if (response.body() == null) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("code", 500);
+                jsonObject.put("message", "服务器内部错误");
+                data = jsonObject.toString();
+            } catch (JSONException e) {
+                WCSLogUtil.e(e.getMessage());
+                data = "Service error";
+            }
+        } else {
+            data = response.body().string();
+        }
+        result.setResponse(data);
 
     }
 

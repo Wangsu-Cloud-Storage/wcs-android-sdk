@@ -66,16 +66,4 @@ public class ClientException extends Exception {
         return canceled;
     }
 
-
-    @Override
-    public String getMessage() {
-        String base = super.getMessage();
-        if(isCanceledException()||getCause()==null){
-            return base;
-        }
-        if (base == null && getCause() != null && getCause().getMessage() == null) {
-            return getCause().getClass().getName();
-        }
-        return getCause().getMessage();
-    }
 }

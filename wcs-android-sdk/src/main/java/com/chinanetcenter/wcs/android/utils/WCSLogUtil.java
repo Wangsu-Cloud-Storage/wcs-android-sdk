@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.chinanetcenter.wcs.android.Config;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -19,10 +20,10 @@ public class WCSLogUtil {
 
     public static String getStackTraceString(Throwable tr) {
         if (tr == null) {
-            return "";
+            return "Throwable is null";
         }
 
-        if (tr.getLocalizedMessage() != null) {
+        if (tr.getLocalizedMessage() != null && !"null".equals(tr.getLocalizedMessage())) {
             return tr.getLocalizedMessage();
         }
 
@@ -37,7 +38,14 @@ public class WCSLogUtil {
         PrintWriter pw = new PrintWriter(sw);
         tr.printStackTrace(pw);
         pw.flush();
-        return sw.toString();
+        String stackTrace = sw.toString();
+        try {
+            sw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        pw.close();
+        return stackTrace;
     }
 
     public static void v(String msg) {

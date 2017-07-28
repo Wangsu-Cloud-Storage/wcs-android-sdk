@@ -33,7 +33,7 @@ public abstract class FileStringListener implements
                 onFailure(new OperationMessage(result.getStatusCode(), result.getResponse()));
             }
         } catch (JSONException e) {
-            onFailure(new OperationMessage(0, null, e));
+            onFailure(new OperationMessage(e));
         }
 
     }

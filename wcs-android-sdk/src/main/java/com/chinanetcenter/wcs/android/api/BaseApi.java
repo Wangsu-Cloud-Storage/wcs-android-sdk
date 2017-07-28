@@ -44,7 +44,7 @@ public class BaseApi {
         return true;
     }
 
-    public static JSONObject parseWCSUploadResponse(WcsResult result) {
+    public static JSONObject parseWCSUploadResponse(WcsResult result) throws JSONException {
         WCSLogUtil.d("parsing upload response : " + result.getResponse());
 
         JSONObject responseJsonObject = null;
@@ -64,51 +64,12 @@ public class BaseApi {
                     for (String param : params) {
                         int index = param.indexOf("=");
                         if (index > 0) {
-                            try {
-                                responseJsonObject.put(param.substring(0, index), param.substring(index + 1));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            responseJsonObject.put(param.substring(0, index), param.substring(index + 1));
                         }
                     }
                 } catch (IllegalArgumentException e) {
                     WCSLogUtil.d("bad base-64");
-                    try {
-                        responseJsonObject.put("headers", result.getHeaders());
-                    } catch (JSONException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
-        }
-        return responseJsonObject;
-    }
-
-    public static JSONObject parseWCSUploadResponse(String responseString) {
-        WCSLogUtil.d("parsing upload response : " + responseString);
-
-        JSONObject responseJsonObject = null;
-        try {
-            responseJsonObject = new JSONObject(responseString);
-        } catch (JSONException e) {
-            WCSLogUtil.d("Try serializing as json failured, response may encoded.");
-        }
-
-        if (null == responseJsonObject) {
-            responseJsonObject = new JSONObject();
-            if (!TextUtils.isEmpty(responseString)) {
-                String response = EncodeUtils.urlsafeDecodeString(responseString);
-                WCSLogUtil.d("response string : " + response);
-                String[] params = response.split("&");
-                for (String param : params) {
-                    int index = param.indexOf("=");
-                    if (index > 0) {
-                        try {
-                            responseJsonObject.put(param.substring(0, index), param.substring(index + 1));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    responseJsonObject.put("headers", result.getHeaders());
                 }
             }
         }
