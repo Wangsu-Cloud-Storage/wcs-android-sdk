@@ -187,8 +187,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
         ClientConfig config = new ClientConfig();
         config.setMaxConcurrentRequest(10);
         FileUploader.setClientConfig(config);
-//        FileUploader.setUploadUrl(mBaseUrlEt.getText().toString().trim());
-        FileUploader.setUploadUrl("http://wcs-sdk-test.up0.v1.wcsapi.com");
+        FileUploader.setUploadUrl(mBaseUrlEt.getText().toString().trim());
 
         mHandler = new Handler() {
             @Override

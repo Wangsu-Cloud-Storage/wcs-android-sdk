@@ -28,7 +28,7 @@ public abstract class FileStringListener implements
             WCSLogUtil.i(result.getResponse());
             if (jsonObject.getInt("code") == 200) {
                 JSONObject data = jsonObject.getJSONObject("data");
-                onSuccess(result.getStatusCode(), data.getString("uploadToken"));
+                onSuccess(result.getStatusCode(), data.toString());
             } else {
                 onFailure(new OperationMessage(result.getStatusCode(), result.getResponse()));
             }
