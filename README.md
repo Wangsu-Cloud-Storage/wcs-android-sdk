@@ -87,6 +87,14 @@ Android Studio:
     config.setMaxConcurrentRequest(10);
     FileUploader.setClientConfig(config);
 ```
+#### 自定义块、片的大小
+
+块的大小，默认为4M，必须是4M的倍数，最大不能超过100M。
+片的大小，默认为256KB，必须是64K的倍数，最大不能超过块的大小。
+
+```java
+    FileUploader.setBlockConfigs(8, 256 * 2);
+```
 
 #### 文件上传
 
