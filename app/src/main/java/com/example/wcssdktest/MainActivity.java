@@ -159,8 +159,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	}
 
 	private void initParams() {
-//        FileUploader.setUploadUrl(mBaseUrlEt.getText().toString().trim());
-		FileUploader.setUploadUrl(TextUtils.isEmpty(mBaseUrlEt.getText().toString().trim()) ? "http://wcs-sdk-test.up0.v1.wcsapi.com" : mBaseUrlEt.getText().toString().trim());
+		FileUploader.setUploadUrl(mBaseUrlEt.getText().toString().trim());
 
 		conf = new ParamsConf();
 
@@ -234,17 +233,14 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		Log.i(TAG, "test normal path " + filePath);
 		final File file = new File(filePath);
 		Log.i(TAG, "file exists " + file.exists() + " can read " + file.canRead());
-//		        final String token = "db17ab5d18c137f786b67c490187317a0738f94a:Njk5OTJjN2IyY2NiOTVhODhiZDhkNTM2MjNlMmZkMjNmMjYyZjJmNA==:eyJzY29wZSI6ImltYWdlczpmaWxlMTAwayIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MSwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
 		//参数传递
 		String token = "";
 		token = mTokenEt.getText().toString();
 		if (TextUtils.isEmpty(token)) {
-//                    token = "db17ab5d18c137f786b67c490187317a0738f94a:Njk5OTJjN2IyY2NiOTVhODhiZDhkNTM2MjNlMmZkMjNmMjYyZjJmNA==:eyJzY29wZSI6ImltYWdlczpmaWxlMTAwayIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MSwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
-//                    token = "db17ab5d18c137f786b67c490187317a0738f94a:NDRlNTllZGM5NjFjMWQyMjJlY2FlNzVmYWQ0ZGVkYzdlN2Q1NGM0Zg==:eyJzY29wZSI6Indjcy1zZGstdGVzdCIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsInJldHVybkJvZHkiOiJwb3NpdGlvbj0kKHg6cG9zaXRpb24pJm1lc3NhZ2U9JCh4Om1lc3NhZ2UpIiwib3ZlcndyaXRlIjowLCJmc2l6ZUxpbWl0IjowLCJpbnN0YW50IjowLCJzZXBhcmF0ZSI6MH0=";
 			//指定returnBody
-//                    token="db17ab5d18c137f786b67c490187317a0738f94a:Y2I0NzEzMjQ3ZjU3ODNlOTZhMDZjMGNmZjM4NTM2NTYyMzJiZDhlYw==:eyJzY29wZSI6Indjcy1zZGstdGVzdDphYmNkd2FmIiwiZGVhZGxpbmUiOiI0MDcwODgwMDAwMDAwIiwicmV0dXJuQm9keSI6ImJ1Y2tldD0kKGJ1Y2tldCkma2V5PSQoa2V5KSIsIm92ZXJ3cml0ZSI6MSwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
-//自定义返回参数
-			token = "db17ab5d18c137f786b67c490187317a0738f94a:ZmM2NmViMjhkM2Q4ZGMyZmYxNThiOWMxZDUyYWU1ZjY0NzIzYzM0NA==:eyJzY29wZSI6Indhbmd3YXlob21lIiwiZGVhZGxpbmUiOiI0MDcwODgwMDAwMDAwIiwicmV0dXJuQm9keSI6Ind3aFRlc3ROYW1lPSQoeDp0ZXN0KSZpcD0kKGlwKSIsIm92ZXJ3cml0ZSI6MSwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";                    //				final String token = "db17ab5d18c137f786b67c490187317a0738f94a:ZjRmM2FiOGY2NGY5YzhmMGFkMzA4MjQ4NDJjZWNjNTllMDNhNzkxOA==:eyJzY29wZSI6ImFwaXRlc3QtbmV0cHJvYmUiLCJkZWFkbGluZSI6IjE1MTQ3NzkyMDAwMDAiLCJvdmVyd3JpdGUiOjAsImZzaXplTGltaXQiOjAsImluc3RhbnQiOjAsInNlcGFyYXRlIjowfQ==";
+			//token="指定returnbody的token";
+			//自定义返回参数
+			token = "your token";
 
 		}
 		HashMap<String, String> callbackBody = new HashMap<String, String>();
@@ -294,18 +290,20 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	 */
 	private void multiNormalUpload() {
 
-	String[] tokens = {"db17ab5d18c137f786b67c490187317a0738f94a:NjU0ODA5NTJiOWNmYjQ3MDlmNDg3OWRhMDI4NjYyYmMwNWMyZWRiNw==:eyJzY29wZSI6Indjcy1zZGstdGVzdDp0ZXN0YWFhYTEiLCJkZWFkbGluZSI6IjQwNzA4ODAwMDAwMDAiLCJvdmVyd3JpdGUiOjEsImZzaXplTGltaXQiOjAsImluc3RhbnQiOjAsInNlcGFyYXRlIjowfQ==",
-			"db17ab5d18c137f786b67c490187317a0738f94a:MTZhZDc0OTM4YTQyMzZlZDc0MGRhOWUxODU4ODQ2NzI5MTliYzk5NA==:eyJzY29wZSI6Indjcy1zZGstdGVzdDp0ZXN0YWFhYTIiLCJkZWFkbGluZSI6IjQwNzA4ODAwMDAwMDAiLCJvdmVyd3JpdGUiOjEsImZzaXplTGltaXQiOjAsImluc3RhbnQiOjAsInNlcGFyYXRlIjowfQ==",
-			"db17ab5d18c137f786b67c490187317a0738f94a:NWE0NGZhOGQzMDkwOTE4ZGY1MjVhYjIzMjUyOTFjMjVhZjlkMWUzMA==:eyJzY29wZSI6Indjcy1zZGstdGVzdDp0ZXN0YWFhYTMiLCJkZWFkbGluZSI6IjQwNzA4ODAwMDAwMDAiLCJvdmVyd3JpdGUiOjEsImZzaXplTGltaXQiOjAsImluc3RhbnQiOjAsInNlcGFyYXRlIjowfQ==",
-			"db17ab5d18c137f786b67c490187317a0738f94a:MTY5YWVjNmE1M2M2YWRlMzY2NzI3ODg1N2FiZDhmYzNkNGYzZTA4OA==:eyJzY29wZSI6Indjcy1zZGstdGVzdDp0ZXN0YWFhYTQiLCJkZWFkbGluZSI6IjQwNzA4ODAwMDAwMDAiLCJvdmVyd3JpdGUiOjEsImZzaXplTGltaXQiOjAsImluc3RhbnQiOjAsInNlcGFyYXRlIjowfQ==",
-			"db17ab5d18c137f786b67c490187317a0738f94a:YWI3NjYyOTU2MWJhMTU3YzE2NDcxYWEzMGE5NWM0YmEyMzUyYWQ2Zg==:eyJzY29wZSI6Indjcy1zZGstdGVzdDp0ZXN0YWFhYTUiLCJkZWFkbGluZSI6IjQwNzA4ODAwMDAwMDAiLCJvdmVyd3JpdGUiOjEsImZzaXplTGltaXQiOjAsImluc3RhbnQiOjAsInNlcGFyYXRlIjowfQ=="
-	};
+		String[] tokens = {"your token1", "your token2", "your token3", "your token4", "your token5"};
+		String[] files = {mFilePath + File.separator + "100k",
+				mFilePath + File.separator + "200k",
+				mFilePath + File.separator + "500k",
+				mFilePath + File.separator + "1m",
+				mFilePath + File.separator + "4m"
+		};
 		final String filePath = getCurrentFilePath();
 		Log.i(TAG, "test normal path " + filePath);
 		final File file = new File(filePath);
 		Log.i(TAG, "file exists " + file.exists() + " can read " + file.canRead());
 		for (int i = 0; i < 5; i++) {
 			normalUploadIndeed(file, tokens[i]);
+//			normalUploadIndeed(new File(files[i]), tokens[i]);
 		}
 
 	}
@@ -360,9 +358,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		String token = "";
 		token = mTokenEt.getText().toString();
 		if (TextUtils.isEmpty(token)) {
-//                    token = "db17ab5d18c137f786b67c490187317a0738f94a:Njk5OTJjN2IyY2NiOTVhODhiZDhkNTM2MjNlMmZkMjNmMjYyZjJmNA==:eyJzY29wZSI6ImltYWdlczpmaWxlMTAwayIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MSwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
 			//wcs-sdk-test的空间token 不带key
-			token = "db17ab5d18c137f786b67c490187317a0738f94a:ZTBjNWUwNzdjMWU5MDZlNDE1ZDQ3MjA4ZGM1Nzk5Yzc1ZTg4NDExNA==:eyJzY29wZSI6Indjcy1zZGstdGVzdCIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MCwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
+			token = "your token";
 		}
 		normalUploadIndeed(file, token);
 
@@ -372,10 +369,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	 * 异步分片上传
 	 */
 	private void sliceUpload() {
-//        String uploadToken = "db17ab5d18c137f786b67c490187317a0738f94a:OTgyMGMxZjA5NmZlMmZjYmZmNDcyM2RhYzVhMGFmNzQ4ZDg3OTkxNw==:eyJzY29wZSI6Ind1eWlrdW46cmVzdG9yZS5pcHN3IiwiZGVhZGxpbmUiOiI0MDcwODgwMDAwMDAwIiwib3ZlcndyaXRlIjoxLCJmc2l6ZUxpbWl0IjowfQ==";
 		//wcs-sdk-test的空间token 不带key
-		String uploadToken = "1057f27271aa52b72fc0ff4f507fe63345c114b9:MjMzNWEwMzBiMGVkNWJmODgyZmZhZDQxNTA3ODNhMWQ4NWJkNTQ4Mw==:" +
-				"eyJzY29wZSI6Indjcy1zZGstdGVzdCIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MCwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
+		String uploadToken = "your token";
 		final String filePath = getCurrentFilePath();
 		// "restore.ipsw";
 		Log.i(TAG, "test slice path " + filePath);
@@ -421,11 +416,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	}
 
 	private void sliceUploadJSON() {
-//        String uploadToken = "db17ab5d18c137f786b67c490187317a0738f94a:OTgyMGMxZjA5NmZlMmZjYmZmNDcyM2RhYzVhMGFmNzQ4ZDg3OTkxNw==:eyJzY29wZSI6Ind1eWlrdW46cmVzdG9yZS5pcHN3IiwiZGVhZGxpbmUiOiI0MDcwODgwMDAwMDAwIiwib3ZlcndyaXRlIjoxLCJmc2l6ZUxpbWl0IjowfQ==";
-		String uploadToken =
-				"1057f27271aa52b72fc0ff4f507fe63345c114b9:MjMzNWEwMzBiMGVkNWJmODgyZmZhZDQxNTA3ODNhMWQ4NWJkNTQ4Mw==:eyJzY29wZSI6Indjcy1zZGstdGVzdCIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MCwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";        //wcs-sdk-test的空间token 不带key
-//        String uploadToken = "1057f27271aa52b72fc0ff4f507fe63345c114b9:MjMzNWEwMzBiMGVkNWJmODgyZmZhZDQxNTA3ODNhMWQ4NWJkNTQ4Mw==:" +
-//            "eyJzY29wZSI6Indjcy1zZGstdGVzdCIsImRlYWRsaW5lIjoiNDA3MDg4MDAwMDAwMCIsIm92ZXJ3cml0ZSI6MCwiZnNpemVMaW1pdCI6MCwiaW5zdGFudCI6MCwic2VwYXJhdGUiOjB9";
+		String uploadToken = "your token";
 		final String filePath = getCurrentFilePath();
 		// "restore.ipsw";
 		Log.i(TAG, "test slice path " + filePath);
