@@ -11,16 +11,13 @@ import com.chinanetcenter.wcs.android.entity.OperationMessage;
 import com.chinanetcenter.wcs.android.entity.SliceCache;
 import com.chinanetcenter.wcs.android.entity.SliceCacheManager;
 import com.chinanetcenter.wcs.android.entity.SliceResponse;
-import com.chinanetcenter.wcs.android.exception.ServiceException;
 import com.chinanetcenter.wcs.android.internal.SliceUploadRequest;
 import com.chinanetcenter.wcs.android.internal.UploadFileRequest;
 import com.chinanetcenter.wcs.android.internal.WcsCompletedCallback;
 import com.chinanetcenter.wcs.android.internal.WcsProgressCallback;
-import com.chinanetcenter.wcs.android.listener.FileStringListener;
 import com.chinanetcenter.wcs.android.listener.FileUploaderListener;
 import com.chinanetcenter.wcs.android.listener.FileUploaderStringListener;
 import com.chinanetcenter.wcs.android.listener.SliceUploaderListener;
-import com.chinanetcenter.wcs.android.network.HttpHeaders;
 import com.chinanetcenter.wcs.android.network.HttpMethod;
 import com.chinanetcenter.wcs.android.network.WcsRequest;
 import com.chinanetcenter.wcs.android.network.WcsResult;
@@ -668,7 +665,7 @@ public class FileUploader {
         block.setByteArray(byteArray);
         final int currentIndex = block.getIndex();
         Slice slice = block.moveToNext();
-        if (null != slice && currentIndex == 0) { // TODO: 2017/5/2 第一片
+        if (null != slice && currentIndex == 0) { //  第一片
             String initBlockUrl = baseUrl + "/mkblk/" + block.size() + "/" + blockIndex;
 
             SliceUploadRequest request = new SliceUploadRequest();

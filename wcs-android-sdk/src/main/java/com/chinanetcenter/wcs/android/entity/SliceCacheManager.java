@@ -39,7 +39,8 @@ public class SliceCacheManager {
         }
         for (SliceCache cache : sCacheSet) {
             if (cache.getFileHash().equals(sliceCache.getFileHash())) {
-                return;
+                //已存在则替换
+                sCacheSet.remove(cache);
             }
         }
         sCacheSet.add(sliceCache);
