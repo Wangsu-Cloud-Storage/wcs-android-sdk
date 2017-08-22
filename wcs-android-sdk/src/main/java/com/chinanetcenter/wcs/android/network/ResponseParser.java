@@ -1,7 +1,5 @@
 package com.chinanetcenter.wcs.android.network;
 
-import java.io.IOException;
-
 import okhttp3.Response;
 
 /**
@@ -13,5 +11,5 @@ import okhttp3.Response;
  * @description :TODO
  */
 public interface ResponseParser<T> {
-    public T parse(Response response) throws IOException;
+    public T parse(Response response) throws Exception;
 }

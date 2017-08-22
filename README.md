@@ -15,11 +15,15 @@ ANDROID SDK基于网宿云存储API规范构建，适用于ANDROID。使用此SD
 
 工程源码
 
-[app](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk)
+[app](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/master/app/src/main)
 
-sample 目录
+sample目录
 
-## 
+[jar](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/master/app/libs)
+
+jar包
+
+
 
 
 

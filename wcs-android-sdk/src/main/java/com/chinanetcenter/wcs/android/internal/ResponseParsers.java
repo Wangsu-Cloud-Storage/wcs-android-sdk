@@ -77,7 +77,7 @@ public class ResponseParsers {
 
     public static class UploadBlockResponseParser implements ResponseParser<SliceResponse> {
         @Override
-        public SliceResponse parse(Response response) throws IOException {
+        public SliceResponse parse(Response response) throws IOException, JSONException {
             SliceResponse result = new SliceResponse();
             setWcsResult(response, result);
             if (response.isSuccessful()) {

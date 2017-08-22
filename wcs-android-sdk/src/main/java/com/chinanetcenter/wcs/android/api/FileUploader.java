@@ -642,60 +642,13 @@ public class FileUploader {
                                     final ByteArray byteArray,
                                     final ParamsConf conf) {
 
-        WcsCompletedCallback<WcsRequest, SliceResponse> wcsCompletedCallback =
-                new WcsCompletedCallback<WcsRequest, SliceResponse>() {
-                    @Override
-                    public void onSuccess(WcsRequest request, SliceResponse result) {
-                        uploadNextSlice(tag, result, blockIndex, block, context, uploadToken,
-                                sliceCache, progressNotifier, uploadBlockListener, conf);
-                    }
 
-                    @Override
-                    public void onFailure(WcsRequest request, OperationMessage operationMessage) {
-//                block.releaseBuffer();
-                        WCSLogUtil.d("block index failured : " + blockIndex + ", onFailure : " +
-                                operationMessage.getMessage());
-                        uploadBlockListener.onBlockUploadFailured(blockIndex, operationMessage);
-                    }
-                };
-
-        //初始化第一片缓存
-//        block.initFirstSlice();
         //设置缓存
         block.setByteArray(byteArray);
         final int currentIndex = block.getIndex();
         Slice slice = block.moveToNext();
         if (null != slice && currentIndex == 0) { //  第一片
-            String initBlockUrl = baseUrl + "/mkblk/" + block.size() + "/" + blockIndex;
-
-            SliceUploadRequest request = new SliceUploadRequest();
-            request.setMethod(HttpMethod.POST);
-            request.setUrl(initBlockUrl);
-            request.setUploadData(slice.toByteArray());
-            Map<String, String> headers = new HashMap<>();
-            headers.put("Authorization", uploadToken);
-            headers.put("UploadBatch", sliceCache.getUploadBatch());
-            headers.put("Content-Type", "application/octet-stream");
-            if (conf != null) {
-                if (!TextUtils.isEmpty(conf.mimeType)) {
-                    headers.put("MimeType", conf.mimeType);
-                }
-                if (!TextUtils.isEmpty(conf.keyName))
-                    headers.put("Key", EncodeUtils.urlsafeEncode(conf.keyName));
-            }
-            request.setHeaders(headers);
-
-            //设置进度
-            request.setProgressCallback(new WcsProgressCallback<WcsRequest>() {
-                @Override
-                public void onProgress(WcsRequest request, long currentSize, long totalSize) {
-                    progressNotifier.increaseProgressAndNotify(currentSize);
-                }
-            });
-
-            getInternalRequest(context, sClientConfig).uploadBlock(tag, request, wcsCompletedCallback, context);
-
-            dump(context, uploadToken, initBlockUrl, slice.size(), block.getOriginalFileName());
+            makeBlock(tag, context, uploadToken, block, blockIndex, slice, sliceCache, progressNotifier, uploadBlockListener, conf);
         } else if (null != slice) {
             uploadSlice(tag, context, uploadToken, block, blockIndex, slice,
                     sliceCache, sliceCache.getBlockContext().get(blockIndex), progressNotifier,
@@ -704,6 +657,68 @@ public class FileUploader {
 //            block.releaseBuffer();//释放缓存
             uploadBlockListener.onBlockUploaded(blockIndex, sliceCache.getBlockContext().get(blockIndex));
         }
+    }
+
+    /**
+     * 生成一个block，同时上传第一片
+     *
+     * @param tag                 用于标记分片上传，可取任意值(比如说文件名),只对取消产生影响，不想使用可置为null
+     * @param context             上下文
+     * @param uploadToken         上传token
+     * @param block               块
+     * @param blockIndex          块的索引
+     * @param slice               当前片
+     * @param sliceCache          缓存的块和片的信息
+     * @param progressNotifier    进度提示
+     * @param uploadBlockListener 块上传回调
+     * @param conf                一些自定义参数
+     */
+    private static void makeBlock(final Object tag, final Context context, final String uploadToken, final Block block, final int blockIndex, final Slice slice, final SliceCache sliceCache, final ProgressNotifier progressNotifier, final UploadBlockListener uploadBlockListener, final ParamsConf conf) {
+        WcsCompletedCallback<WcsRequest, SliceResponse> wcsCompletedCallback =
+                new WcsCompletedCallback<WcsRequest, SliceResponse>() {
+                    @Override
+                    public void onSuccess(WcsRequest request, SliceResponse result) {
+                        uploadNextSlice(tag, result, blockIndex, block, slice, context, uploadToken,
+                                sliceCache, progressNotifier, uploadBlockListener, conf);
+                    }
+
+                    @Override
+                    public void onFailure(WcsRequest request, OperationMessage operationMessage) {
+                        WCSLogUtil.d("block index failured : " + blockIndex + ", onFailure : " +
+                                operationMessage.getMessage());
+                        uploadBlockListener.onBlockUploadFailured(blockIndex, operationMessage);
+                    }
+                };
+        String initBlockUrl = baseUrl + "/mkblk/" + block.size() + "/" + blockIndex;
+
+        SliceUploadRequest request = new SliceUploadRequest();
+        request.setMethod(HttpMethod.POST);
+        request.setUrl(initBlockUrl);
+        request.setUploadData(slice.toByteArray());
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", uploadToken);
+        headers.put("UploadBatch", sliceCache.getUploadBatch());
+        headers.put("Content-Type", "application/octet-stream");
+        if (conf != null) {
+            if (!TextUtils.isEmpty(conf.mimeType)) {
+                headers.put("MimeType", conf.mimeType);
+            }
+            if (!TextUtils.isEmpty(conf.keyName))
+                headers.put("Key", EncodeUtils.urlsafeEncode(conf.keyName));
+        }
+        request.setHeaders(headers);
+
+        //设置进度
+        request.setProgressCallback(new WcsProgressCallback<WcsRequest>() {
+            @Override
+            public void onProgress(WcsRequest request, long currentSize, long totalSize) {
+                progressNotifier.increaseProgressAndNotify(currentSize);
+            }
+        });
+
+        getInternalRequest(context, sClientConfig).uploadBlock(tag, request, wcsCompletedCallback, context);
+
+        dump(context, uploadToken, initBlockUrl, slice.size(), block.getOriginalFileName());
     }
 
     /**
@@ -730,7 +745,7 @@ public class FileUploader {
         WcsCompletedCallback<WcsRequest, SliceResponse> wcsCompletedCallback = new WcsCompletedCallback<WcsRequest, SliceResponse>() {
             @Override
             public void onSuccess(WcsRequest request, SliceResponse result) {
-                uploadNextSlice(tag, result, blockIndex, block, context, uploadToken,
+                uploadNextSlice(tag, result, blockIndex, block, slice, context, uploadToken,
                         sliceCache, progressNotifier, uploadBlockListener, conf);
             }
 
@@ -778,18 +793,30 @@ public class FileUploader {
 
     /**
      * 根据返回的片信息，验证上传的片是否完整，是则继续下一片，否则重传
+     *
+     * @param tag                 用于标记分片上传，可取任意值(比如说文件名),只对取消产生影响，不想使用可置为null
+     * @param sliceResponse       上传完片的响应信息：偏移量等
+     * @param blockIndex          块的序列号
+     * @param block               块
+     * @param lastSlice           刚上传的片
+     * @param context             上下文
+     * @param uploadToken         上传token
+     * @param sliceCache          缓存的块和片的信息
+     * @param progressNotifier    进度提示
+     * @param uploadBlockListener 块上传回调
+     * @param conf                一些自定义参数
      */
     private static void uploadNextSlice(Object tag, SliceResponse sliceResponse,
                                         int blockIndex,
-                                        Block block, Context context, String uploadToken,
+                                        Block block, Slice lastSlice, Context context, String uploadToken,
                                         SliceCache sliceCache, ProgressNotifier progressNotifier,
                                         UploadBlockListener uploadBlockListener,
                                         ParamsConf conf) {
         WCSLogUtil.d("block index : " + blockIndex + ";Thread : " + Thread.currentThread().getName() + ";slice index: " + block.getIndex() + "; uploadSlice slice response : " + sliceResponse);
-        final Slice lastSlice = block.lastSlice();// 取刚上传的一片
         if (sliceResponse.crc32 == 0) {
             uploadBlockListener.onBlockUploadFailured(blockIndex, new OperationMessage(0, "sliceResponse incorrect, " + sliceResponse.getHeaders()));
         } else if (Crc32.calc(lastSlice.toByteArray()) == sliceResponse.crc32) {
+            //校验成功的情况，继续上传下一片
             sliceCache.getBlockContext().set(blockIndex, sliceResponse.context);//ctx
             sliceCache.getBlockUploadedIndex().set(blockIndex, block.getIndex());
             WCSLogUtil.d("uploadSlice correctly. save sliceCache" + " .block index : " + blockIndex + ";slice index: " + block.getIndex());
@@ -804,10 +831,22 @@ public class FileUploader {
         } else {
             //重传
             //crc32不一致，重新上传，使用之前的offset和context
+            int retry = lastSlice.getRetry();
+            if (retry >= Slice.SLICE_MAX_RETRY) {
+                uploadBlockListener.onBlockUploadFailured(blockIndex, new OperationMessage(0, "crc32 incorrect, " + sliceResponse));
+                return;
+            }
             WCSLogUtil.d("crc32 incorrect,retry");
+            lastSlice.setRetry(++retry);
             progressNotifier.decreaseProgress(lastSlice.toByteArray().length);
-            uploadSlice(tag, context, uploadToken, block, blockIndex, lastSlice,
-                    sliceCache, sliceCache.getBlockContext().get(blockIndex), progressNotifier, uploadBlockListener, conf);
+            if (lastSlice.getOffset() == 0) {
+                //第一片
+                makeBlock(tag, context, uploadToken, block, blockIndex, lastSlice,
+                        sliceCache, progressNotifier, uploadBlockListener, conf);
+            } else {
+                uploadSlice(tag, context, uploadToken, block, blockIndex, lastSlice,
+                        sliceCache, sliceCache.getBlockContext().get(blockIndex), progressNotifier, uploadBlockListener, conf);
+            }
         }
         SliceCacheManager.getInstance().dumpAll();
     }

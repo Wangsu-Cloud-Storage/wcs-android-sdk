@@ -3,7 +3,6 @@ package com.chinanetcenter.wcs.android.entity;
 import android.text.TextUtils;
 
 import com.chinanetcenter.wcs.android.network.WcsResult;
-import com.chinanetcenter.wcs.android.utils.WCSLogUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,33 +30,15 @@ public class SliceResponse extends WcsResult {
      */
     public String md5;
 
-    public static SliceResponse fromJsonString(String jsonString) {
-        SliceResponse sliceResponse = new SliceResponse();
+    public static void fromJsonString(SliceResponse sliceResponse, String jsonString) throws JSONException {
         if (!TextUtils.isEmpty(jsonString)) {
-            try {
-                JSONObject jsonObject = new JSONObject(jsonString);
-                sliceResponse.offset = jsonObject.optLong("offset", 0);
-                sliceResponse.context = jsonObject.optString("ctx", "0");
-                sliceResponse.crc32 = jsonObject.optLong("crc32", 0);
-                sliceResponse.md5 = jsonObject.optString("checksum", "0");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return sliceResponse;
-    }
-
-
-    public static void fromJsonString(SliceResponse sliceResponse, String jsonString) {
-        if (!TextUtils.isEmpty(jsonString)) {
-            try {
-                JSONObject jsonObject = new JSONObject(jsonString);
-                sliceResponse.offset = jsonObject.optLong("offset", 0);
-                sliceResponse.context = jsonObject.optString("ctx", "0");
-                sliceResponse.crc32 = jsonObject.optLong("crc32", 0);
-                sliceResponse.md5 = jsonObject.optString("checksum", "0");
-            } catch (JSONException e) {
-                WCSLogUtil.e(e.getMessage());
+            JSONObject jsonObject = new JSONObject(jsonString);
+            sliceResponse.offset = jsonObject.optLong("offset", 0);
+            sliceResponse.context = jsonObject.optString("ctx", "0");
+            sliceResponse.crc32 = jsonObject.optLong("crc32", 0);
+            sliceResponse.md5 = jsonObject.optString("checksum", "0");
+            if (sliceResponse.crc32 == 0 || "0".equals(sliceResponse.context)) {
+                throw new JSONException("crc32 or context not found: " + jsonString);
             }
         }
     }
