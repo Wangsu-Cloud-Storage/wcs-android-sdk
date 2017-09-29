@@ -163,7 +163,6 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
 
 
     public WcsRequestTask(WcsRequest params, ResponseParser responseParser,
-
                           ExecutionContext executionContext, int maxRetry) {
 
         this.mParams = params;
@@ -195,9 +194,9 @@ public class WcsRequestTask<T extends WcsResult> implements Callable<T> {
             for (String key : mParams.getHeaders().keySet()) {
                 requestBuilder = requestBuilder.addHeader(key, mParams.getHeaders().get(key));
             }
-            //替换UA为wcs-android-sdk-1.6.3,方便确定请求从哪里发出来
+            //User-Agent: WCS-Android-SDK-<version>-<device>-<os>(https://www.chinanetcenter.com)
             requestBuilder.header("User-Agent",
-                    String.format("wcs-android-sdk-%s", Config.VERSION));
+                    String.format("WCS-Android-SDK-%s-%s-%s(%s)", Config.VERSION, android.os.Build.MODEL, android.os.Build.VERSION.RELEASE,"https://www.chinanetcenter.com"));
             String contentType = mParams.getHeaders().get(HttpHeaders.CONTENT_TYPE);
             switch (mParams.getMethod()) {
                 case PUT:

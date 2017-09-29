@@ -7,7 +7,7 @@ public class Config {
     public static final String MGR_URL = "http://mgr.wcsapi.biz.matocloud.com";
 
 
-    public static String VERSION = "1.6.3";
+    public static String VERSION = "1.6.4";
     public static boolean DEBUGGING = false;
 
     //不设置默认url，必须由用户填充
