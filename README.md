@@ -86,8 +86,8 @@ Android Studio:
 1. 通过配置文件统一设置上传，管理域名
 ```
 com.chinanetcenter.wcs.android.Config.java
+
 public static final String PUT_URL = "您的上传域名";
-public static final String GET_URL = "您绑定的空间域名";
 public static final String MGR_URL = "您的管理域名";
 ```
 
