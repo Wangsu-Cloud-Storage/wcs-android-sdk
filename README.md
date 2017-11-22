@@ -83,9 +83,17 @@ Android Studio:
 #### 初始化
 
 初始化主要完成upload domain设置、Client参数配置（可选）-分片上传并发数、响应超时时间、连接超时时间、重试次数。
+1. 通过配置文件统一设置上传，管理域名
+```
+com.chinanetcenter.wcs.android.Config.java
+public static final String PUT_URL = "您的上传域名";
+public static final String GET_URL = "您绑定的空间域名";
+public static final String MGR_URL = "您的管理域名";
+```
 
+2. 在程序中指定
 ```java
-    FileUploader.setUploadUrl("http://up.wcsapi.biz.matocloud.com:8090");
+    FileUploader.setUploadUrl("您的上传域名");
     
     ClientConfig config = new ClientConfig();
     config.setMaxConcurrentRequest(10);
