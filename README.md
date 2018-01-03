@@ -99,6 +99,22 @@ public static final String MGR_URL = "您的管理域名";
     config.setMaxConcurrentRequest(10);
     FileUploader.setClientConfig(config);
 ```
+
+3. 设置表单参数，文件名，mimeType等
+```
+conf = new ParamsConf();
+
+// 原始文件名称
+conf.fileName = '<原始文件>';
+
+// 通过表单参数设置文件保存到云存储的名称
+conf.keyName = <fileKey>;
+
+// 通过表单参数设置文件的mimeType
+conf.mimeType = '<mimeType>';
+FileUploader.setParams(conf);
+```
+
 #### 自定义块、片的大小
 
 块的大小，默认为4M，必须是4M的倍数，最大不能超过100M。
