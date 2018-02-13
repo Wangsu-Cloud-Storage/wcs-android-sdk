@@ -2,12 +2,12 @@
 
 ANDROID SDK基于网宿云存储API规范构建，适用于ANDROID。使用此SDK构建您的移动APP，能让您非常便捷地将数据安全地存储到网宿云平台上。
 
-- [下载链接](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#下载链接)
-- [移动端场景演示](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#移动端场景演示)
-- [使用指南](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#使用指南) 
-  - [准备开发环境](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#准备开发环境)
-  -  [配置信息](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#配置信息)
-  -  [文件上传](https://wcs.chinanetcenter.com/document/SDK/wcs-android-sdk#文件上传)
+- [下载链接](#下载链接)
+- [移动端场景演示](#移动端场景演示)
+- [使用指南](#使用指南) 
+  -  [准备开发环境](#准备开发环境)
+  -  [配置信息](k#配置信息)
+  -  [文件上传](#文件上传)
 
 ## 工程介绍
 
@@ -269,7 +269,7 @@ private void uploadFile(File srcFile) {
 
 分片上传机制是将一个大文件切分成多个自定义大小的块，然后将这些块并行上传，如果某个块上传失败，客户端只需要重新上传这个块即可。 
 
-*注意：每个块的最大大小不能超过4M，超过4M的设置，将采用默认最大4M切分；最小不能小于1M，小于1M，将会采用1M去切分。*
+*注意：每个块的最大大小不能超过100M；最小不能小于4M，否则将会采用默认4M去切分。*
 
 **范例**
 
