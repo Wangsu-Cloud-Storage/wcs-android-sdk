@@ -306,6 +306,7 @@ Log.d("CNCLog", String.format(Locale.CHINA, "uploaded : %s, total : %s", uploade
 
 #### 文件完整性校验
 如果需要校验上传成功的文件是否完整，可在客户端计算文件hash，并和上传成功后云存储返回的hash进行对比，如果hash一致，则表明文件是完整的。
+
 *注意：文件hash值的计算比较消耗资源，请谨慎使用*
 
 **范例**
