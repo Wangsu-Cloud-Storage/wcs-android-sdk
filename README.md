@@ -97,6 +97,8 @@ public static final String MGR_URL = "您的管理域名";
     FileUploader.setUploadUrl("您的上传域名");
     
     ClientConfig config = new ClientConfig();
+    
+    // 设置分片上传并发数为10
     config.setMaxConcurrentRequest(10);
     FileUploader.setClientConfig(config);
 ```
