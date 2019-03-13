@@ -98,7 +98,7 @@ public static final String MGR_URL = "您的管理域名";
     
     ClientConfig config = new ClientConfig();
     
-    // 设置分片上传并发数为10
+    // 设置分片上传并发数为10，不配置时默认值为5
     config.setMaxConcurrentRequest(10);
     FileUploader.setClientConfig(config);
 ```
