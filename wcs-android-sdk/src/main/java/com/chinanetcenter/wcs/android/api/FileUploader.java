@@ -237,6 +237,9 @@ public class FileUploader {
             //分片上传key需要做URL安全的Base64编码；普通上传不需要
             if (!TextUtils.isEmpty(conf.keyName))
                 params.put("key", conf.keyName);
+            //设置文件过期时间
+            if (!TextUtils.isEmpty(conf.deadline))
+                params.put("deadline", conf.deadline);
         }
         request.setParameters(params);
         request.setMethod(HttpMethod.POST);
@@ -555,6 +558,9 @@ public class FileUploader {
             //key需要URL安全的Base64编码
             if (!TextUtils.isEmpty(conf.keyName))
                 headers.put("Key", EncodeUtils.urlsafeEncode(conf.keyName));
+            //设置文件过期时间
+            if (!TextUtils.isEmpty(conf.deadline))
+                headers.put("Deadline", conf.deadline);
         }
         request.setHeaders(headers);
 
@@ -648,6 +654,9 @@ public class FileUploader {
             }
             if (!TextUtils.isEmpty(conf.keyName))
                 headers.put("Key", EncodeUtils.urlsafeEncode(conf.keyName));
+            //设置文件过期时间
+            if (!TextUtils.isEmpty(conf.deadline))
+                headers.put("Deadline", conf.deadline);
         }
         request.setHeaders(headers);
 
@@ -718,6 +727,9 @@ public class FileUploader {
             }
             if (!TextUtils.isEmpty(conf.keyName))
                 headers.put("Key", EncodeUtils.urlsafeEncode(conf.keyName));
+            //设置文件过期时间
+            if (!TextUtils.isEmpty(conf.deadline))
+                headers.put("Deadline", conf.deadline);
         }
         request.setHeaders(headers);
 

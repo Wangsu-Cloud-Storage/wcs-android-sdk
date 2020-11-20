@@ -9,10 +9,9 @@ package com.chinanetcenter.wcs.android.api;
  * @description :提供客户设置参数
  */
 public class ParamsConf {
-
-
     public String keyName = "";
     public String fileName = "";
     public String mimeType = "";
+    public String deadline = "";
 
 }
