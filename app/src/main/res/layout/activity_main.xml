@@ -76,6 +76,13 @@
         android:textSize="12sp" />
 
     <EditText
+        android:id="@+id/deadline_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="deadline(可选)"
+        android:textSize="12sp" />
+
+    <EditText
         android:id="@+id/slice_size_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

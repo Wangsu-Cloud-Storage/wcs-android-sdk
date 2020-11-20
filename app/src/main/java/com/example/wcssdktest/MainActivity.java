@@ -57,6 +57,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	private EditText mKeyEt;
 	private EditText mFilenameEt;
 	private EditText mMimeTypeEt;
+	private EditText mDeadlineEt;
 	private EditText mSliceEt;
 	private EditText mBlockEt;
 	private TextView mDisplayTv;
@@ -92,6 +93,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		mKeyEt = (EditText) findViewById(R.id.keyname_et);
 		mFilenameEt = (EditText) findViewById(R.id.filename_et);
 		mMimeTypeEt = (EditText) findViewById(R.id.mimetype_et);
+		mDeadlineEt = (EditText) findViewById(R.id.deadline_et);
 		mSliceEt = (EditText) findViewById(R.id.slice_size_et);
 		mBlockEt = (EditText) findViewById(R.id.block_size_et);
 		mDisplayTv = (TextView) findViewById(R.id.display_tv);
@@ -166,6 +168,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		conf.fileName = TextUtils.isEmpty(mFilenameEt.getText().toString()) ? "" : mFilenameEt.getText().toString();
 		conf.keyName = TextUtils.isEmpty(mKeyEt.getText().toString()) ? "" : mKeyEt.getText().toString();
 		conf.mimeType = TextUtils.isEmpty(mMimeTypeEt.getText().toString()) ? "" : mMimeTypeEt.getText().toString();
+		conf.deadline = TextUtils.isEmpty(mDeadlineEt.getText().toString()) ? "" : mDeadlineEt.getText().toString();
 		FileUploader.setParams(conf);
 		FileUploader.setBlockConfigs(TextUtils.isEmpty(mBlockEt.getText().toString()) ? 0 : Integer.valueOf(mBlockEt.getText().toString()), TextUtils.isEmpty(mSliceEt.getText().toString()) ? 0 : Integer.valueOf(mSliceEt.getText().toString()));
 	}
