@@ -114,6 +114,8 @@ conf.keyName = <fileKey>;
 
 // 通过表单参数设置文件的mimeType
 conf.mimeType = '<mimeType>';
+// 通过表单参数设置文件过期时间
+conf.deadline = '<deadline>';
 FileUploader.setParams(conf);
 ```
 
