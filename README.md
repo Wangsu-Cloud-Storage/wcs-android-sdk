@@ -289,18 +289,18 @@ private static final long DEFAULT_BLOCK_SIZE = 1 * 1024 * 1024;
 FileUploader.sliceUpload(context, uploadToken, ipaFile, DEFAULT_BLOCK_SIZE, new SliceUploaderListener() {
           @Override
           public void onSliceUploadSucceed(JSONObject jsonObject) {
-Log.d("CNCLog", "slice upload succeeded.");
-}
+            Log.d("CNCLog", "slice upload succeeded.");
+          }
 
-@Override
-public void onSliceUploadFailured(OperationMessage operationMessage) {
-Log.d("CNCLog", "slice upload failured.");
-}
+          @Override
+          public void onSliceUploadFailured(OperationMessage operationMessage) {
+            Log.d("CNCLog", "slice upload failured.");
+          }
 
-@Override
-public void onProgress(long uploaded, long total) {
-Log.d("CNCLog", String.format(Locale.CHINA, "uploaded : %s, total : %s", uploaded, total));
-}
+          @Override
+          public void onProgress(long uploaded, long total) {
+            Log.d("CNCLog", String.format(Locale.CHINA, "uploaded : %s, total : %s", uploaded, total));
+          }
 });
 ```
 
