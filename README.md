@@ -48,8 +48,7 @@ jar包：[jar](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/mast
 - 将以上3个jar包导入工程的libs目录
 
 Eclipse:
-
-![](https://wcs.chinanetcenter.com/indexNew/image/wcs/wcs-android-sdk2.png)
+![复制到项目里libs目录](https://wcs.chinanetcenter.com/indexNew/image/wcs/wcs-android-sdk2.png)
 
 1)如果使用的ADT插件是16及以上，则会自动把jar放到Android Dependencies中，并自动完成后续的jar包的导入；如果不是，请继续浏览第3步；
 
@@ -59,7 +58,7 @@ Eclipse:
 
 4)点击Add Jars，选择工程libs目录下的wcs-android-sdk-x.x.x.jar、okhttp-3.x.x.jar、okio-1.x.x.jar； 
 
-![](https://wcs.chinanetcenter.com/indexNew/image/wcs/wcs-android-sdk3.png)
+![移动开发环境准备2](https://wcs.chinanetcenter.com/indexNew/image/wcs/wcs-android-sdk3.png)
 
 5)点击OK。 
 
@@ -69,7 +68,7 @@ Android Studio:
 
 2)右键选择Add As Library
 
-![](http://doc-pics.w.wcsapi.biz.matocloud.com/sdk/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-android.png)
+![移动开发环境准备3](http://doc-pics.w.wcsapi.biz.matocloud.com/sdk/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-android.png)
 
 3)点击OK。
 
