@@ -36,7 +36,7 @@ jar包：[jar](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/mast
 3) 移动端调用网宿云存储平台提供的接口上传文件 
 4) 网宿云存储在检验凭证合法性后，执行移动端请求的接口逻辑，最终返回给移动端处理结果 
 
-![](https://wcs.chinanetcenter.com/indexNew/image/wcs/wcs-android-sdk1.png)
+![img](https://wcs.chinanetcenter.com/indexNew/image/wcs/wcs-android-sdk1.png)
 
 ### 使用指南
 
