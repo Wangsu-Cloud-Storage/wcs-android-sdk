@@ -204,7 +204,21 @@ public class FileUploader {
     public static void upload(final Context context, final String token,
                               final File file, final HashMap<String, String> callbackBody,
                               final FileUploaderStringListener uploaderListener) {
-        final ParamsConf conf = sParamsConf;
+        upload(context, token, file, callbackBody, (FileUploaderStringListener) uploaderListener, sParamsConf);
+    }
+    /**
+     * 上传文件到网宿云存储
+     *
+     * @param context          当前上下文
+     * @param token            上传文件所需要的凭证
+     * @param file             要上传的文件
+     * @param callbackBody     自定义参数及callbackBody，没有则传空
+     * @param uploaderListener 上传的回调
+     * @param conf             参数设置
+     */
+    public static void upload(final Context context, final String token,
+                              final File file, final HashMap<String, String> callbackBody,
+                              final FileUploaderStringListener uploaderListener, final ParamsConf conf) {
         if (null == token || token.trim().equals("")) {
             uploaderListener.onFailure(new OperationMessage(-1, "token invalidate : " + token));
             return;
@@ -280,7 +294,24 @@ public class FileUploader {
     public static void sliceUpload(final String tag, final Context context, final String uploadToken,
                                    final File file, final HashMap<String, String> callbackBody,
                                    final SliceUploaderListener sliceUploaderListener) {
-        final ParamsConf conf = sParamsConf;
+        sliceUpload(tag, context, uploadToken, file, callbackBody, sliceUploaderListener,sParamsConf);
+    }
+
+    /**
+     * 异步实现的分片上传
+     *
+     * @param tag                   用于标记分片上传，可取任意值(比如说文件名),只对取消产生影响，不想使用可置为null
+     * @param context               上下文
+     * @param uploadToken           上传token
+     * @param file                  待上传文件
+     * @param callbackBody          定制返回给客户端的信息格式
+     *                              详见https://wcs.chinanetcenter.com/document/API/Token/PutPolicy/callback
+     * @param sliceUploaderListener 分片上传回调
+     * @param conf             参数设置
+     */
+    public static void sliceUpload(final String tag, final Context context, final String uploadToken,
+                                   final File file, final HashMap<String, String> callbackBody,
+                                   final SliceUploaderListener sliceUploaderListener, final ParamsConf conf) {
         if (null == file || !file.exists()) {
             if (null != sliceUploaderListener) {
                 HashSet<String> hashSet = new HashSet<String>();
