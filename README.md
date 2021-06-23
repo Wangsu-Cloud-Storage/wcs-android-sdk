@@ -122,10 +122,10 @@ FileUploader.setParams(conf);
 #### 自定义块、片的大小
 
 块的大小，默认为4M，必须是4M的倍数，最大不能超过100M。
-片的大小，默认为256KB，必须是64K的倍数，最大不能超过块的大小。
+片的大小，默认为4M，必须是64K的倍数，最大不能超过块的大小。
 
 ```java
-    FileUploader.setBlockConfigs(8, 512); //设置块大小为8M，片大小为512KB
+    FileUploader.setBlockConfigs(4, 1024 * 4); //设置块大小为4M，片大小为4M
 ```
 
 #### 文件上传

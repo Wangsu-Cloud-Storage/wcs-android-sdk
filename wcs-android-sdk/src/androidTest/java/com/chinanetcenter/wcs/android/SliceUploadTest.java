@@ -49,7 +49,7 @@ public class SliceUploadTest {
 
     @Test
     public void testSlice() throws Exception {
-        FileUploader.setBlockConfigs(8, 256 * 2);
+        FileUploader.setBlockConfigs(4, 1024 * 4);
         String filePath = getPath();
         Log.d(TAG, "uploadSlice: " + filePath);
         final CountDownLatch signal = new CountDownLatch(1);

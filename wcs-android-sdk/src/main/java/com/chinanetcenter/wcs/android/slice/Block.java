@@ -19,7 +19,7 @@ public class Block {
     private static final int PER_SLICE_SIZE = 64 * 1024;
     private static final int MAX_BLOCK_SIZE = 100 * 1024 * 1024;
     private static final int DEFAULT_BLOCK_SIZE = 4 * 1024 * 1024;
-    private static final int DEFAULT_SLICE_SIZE = 256 * 1024;
+    private static final int DEFAULT_SLICE_SIZE = 4 * 1024 * 1024;
 
     private static int sDefaultSliceSize = DEFAULT_SLICE_SIZE;
     private static long sDefaultBlockSize = DEFAULT_BLOCK_SIZE;
