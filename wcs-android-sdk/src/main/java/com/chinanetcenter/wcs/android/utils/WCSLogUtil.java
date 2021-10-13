@@ -54,41 +54,41 @@ public class WCSLogUtil {
 
     public static void v(Class<?> clazz, String msg) {
         if (DEBUGGING) {
-            Log.v(null == clazz ? TAG : getTag(clazz), msg);
+            Log.v(null == clazz ? TAG : getTag(clazz), Thread.currentThread().getName() +" "+ msg);
         }
     }
 
     public static void v(Class<?> clazz, String msg, Throwable tr) {
         if (DEBUGGING) {
-            Log.v(null == clazz ? TAG : getTag(clazz), msg);
+            Log.v(null == clazz ? TAG : getTag(clazz), Thread.currentThread().getName() +" "+ msg);
         }
     }
 
     public static void d(Class<?> clazz, String msg) {
         if (DEBUGGING) {
-            Log.d(null == clazz ? TAG : getTag(clazz), msg);
+            Log.d(null == clazz ? TAG : getTag(clazz), Thread.currentThread().getName() +" "+ msg);
         }
     }
 
     public static void d(Class<?> clazz, String msg, Throwable tr) {
         if (DEBUGGING) {
-            Log.d(null == clazz ? TAG : getTag(clazz), msg);
+            Log.d(null == clazz ? TAG : getTag(clazz), Thread.currentThread().getName() +" "+ msg);
         }
     }
 
     public static void d(String msg) {
-        WCSLogUtil.d(null, msg);
+        WCSLogUtil.d(null,  msg);
     }
 
     public static void i(Class<?> clazz, String msg) {
         if (DEBUGGING) {
-            Log.i(null == clazz ? TAG : getTag(clazz), msg);
+            Log.i(null == clazz ? TAG : getTag(clazz), Thread.currentThread().getName() +" "+ msg);
         }
     }
 
     public static void i(Class<?> clazz, String msg, Throwable tr) {
         if (DEBUGGING) {
-            Log.i(null == clazz ? TAG : getTag(clazz), msg);
+            Log.i(null == clazz ? TAG : getTag(clazz), Thread.currentThread().getName() +" "+ msg);
         }
     }
 
@@ -98,13 +98,13 @@ public class WCSLogUtil {
 
     public static void w(Class<?> clazz, String msg) {
         if (DEBUGGING) {
-            Log.w(null == clazz ? TAG : getTag(clazz), msg);
+            Log.w(null == clazz ? TAG : getTag(clazz), Thread.currentThread().getName() +" "+ msg);
         }
     }
 
     public static void w(Class<?> clazz, String msg, Throwable tr) {
         if (DEBUGGING) {
-            Log.w(null == clazz ? TAG : getTag(clazz), msg);
+            Log.w(null == clazz ? TAG : getTag(clazz), Thread.currentThread().getName() +" "+ msg);
         }
     }
 
@@ -114,18 +114,18 @@ public class WCSLogUtil {
 
     public static void e(Class<?> clazz, String msg) {
         if (DEBUGGING) {
-            Log.e(null == clazz ? TAG : getTag(clazz), msg);
+            Log.e(null == clazz ? TAG : getTag(clazz), Thread.currentThread().getName() +" "+ msg);
         }
     }
 
     public static void e(Class<?> clazz, String msg, Throwable tr) {
         if (DEBUGGING) {
-            Log.e(null == clazz ? TAG : getTag(clazz), msg);
+            Log.e(null == clazz ? TAG : getTag(clazz), Thread.currentThread().getName() +" "+ msg);
         }
     }
 
     public static void e(String msg) {
-        WCSLogUtil.e(null, msg);
+        WCSLogUtil.e(null,  msg);
     }
 
     private static String getTag(Class<?> clazz) {

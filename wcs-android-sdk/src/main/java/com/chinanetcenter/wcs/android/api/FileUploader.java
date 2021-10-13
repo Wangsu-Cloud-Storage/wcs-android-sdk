@@ -742,7 +742,7 @@ public class FileUploader {
 
 
         String uploadSliceUrl = baseUrl + "/bput/" + blockContext + "/" + slice.getOffset();
-
+        WCSLogUtil.d("block index : " + blockIndex + "; uploadSliceUrl:"+uploadSliceUrl);
         SliceUploadRequest request = new SliceUploadRequest();
         request.setMethod(HttpMethod.POST);
         request.setUrl(uploadSliceUrl);

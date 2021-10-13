@@ -31,6 +31,7 @@ public class Block {
     private int mSliceIndex;
     private long mOriginalFileSize;
     private String mFileName;
+    private int blockIndex;
 
     public ByteArray getByteArray() {
         return mByteArray;
@@ -42,13 +43,14 @@ public class Block {
 
     private ByteArray mByteArray;
 
-    Block(RandomAccessFile randomAccessFile, String fileName, long start, long blockSize, int sliceSize) throws IOException {
+    Block(RandomAccessFile randomAccessFile, String fileName, long start, long blockSize, int sliceSize,int blockIndex) throws IOException {
         mRandomAccessFile = randomAccessFile;
         mOriginalFileSize = randomAccessFile.length();
         mFileName = fileName;
         mStart = start;
         mSize = blockSize;
         mSliceSize = sliceSize;
+        this.blockIndex = blockIndex;
     }
 
 
@@ -85,7 +87,8 @@ public class Block {
                 blockSize = remain == 0 ? sDefaultBlockSize : remain;// TODO: 2017/5/2 最后一块
             }
             try {
-                blocks[i] = new Block(randomAccessFile, file.getName(), i * sDefaultBlockSize, blockSize, sDefaultSliceSize);
+                blocks[i] = new Block(new RandomAccessFile(file, "r"), file.getName(), i * sDefaultBlockSize, blockSize, sDefaultSliceSize,i);
+//                blocks[i] = new Block(randomAccessFile, file.getName(), i * sDefaultBlockSize, blockSize, sDefaultSliceSize,i);
                 //有多少块就创建多少空间
                 // TODO: 2017/5/4 需要优化,等真正执行块上传时再创建
 //				blocks[i].mByteArrayBuffer = new ByteArrayBuffer(sDefaultSliceSize);// TODO: 2017/5/2 初始化slice
@@ -151,8 +154,14 @@ public class Block {
 
         try {
             mRandomAccessFile.seek(offset);
+//            try {
+//                Thread.sleep(500L);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
             mRandomAccessFile.read(sliceData, 0, sliceSize);
-            WCSLogUtil.d("offset : " + offset + "; slice size : " + sliceSize);
+//            WCSLogUtil.d("block index : "+blockIndex+"; offset : " + offset + "; slice size : " + sliceSize+" sliceEtag:"+ WetagUtil.getEtagHash(sliceData));
+            WCSLogUtil.d("block index : "+blockIndex+"; offset : " + offset + "; slice size : " + sliceSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
