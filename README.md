@@ -159,19 +159,19 @@ private void uploadFile(File srcFile) {
          */
         FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
 
-            /* 上传成功回调 */
+            /** 上传成功回调 **/
             @Override
             public void onSuccess(int status, JSONObject responseJson) {
                 Log.d(TAG, "responseJson : " + responseJson.toString());
             }
 
-            /*上传失败回调*/
+            /** 上传失败回调 **/
             @Override
             public void onFailure(OperationMessage operationMessage) {
                 Log.e(TAG, "errorMessage : " + operationMessage.toString());
             }
 
-            /*上传进度回调*/
+            /** 上传进度回调 **/
             @Override
             public void onProgress(int bytesWritten, int totalSize) {
                 Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
@@ -206,19 +206,19 @@ private void uploadFile(File srcFile) {
          */
         FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
 
-            /* 上传成功回调 */
+            /** 上传成功回调 **/
             @Override
             public void onSuccess(int status, JSONObject responseJson) {
                 Log.d(TAG, "responseJson : " + responseJson.toString());
             }
 
-            /*上传失败回调*/
+            /** 上传失败回调 **/
             @Override
             public void onFailure(OperationMessage operationMessage) {
                 Log.e(TAG, "errorMessage : " + operationMessage.toString());
             }
 
-            /*上传进度回调*/
+            /** 上传进度回调 **/
             @Override
             public void onProgress(int bytesWritten, int totalSize) {
                 Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
@@ -250,19 +250,19 @@ private void uploadFile(File srcFile) {
          */
         FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
 
-            /* 上传成功回调 */
+            /** 上传成功回调 **/
             @Override
             public void onSuccess(int status, JSONObject responseJson) {
                 Log.d(TAG, "responseJson : " + responseJson.toString());
             }
 
-            /*上传失败回调*/
+            /** 上传失败回调 **/
             @Override
             public void onFailure(OperationMessage operationMessage) {
                 Log.e(TAG, "errorMessage : " + operationMessage.toString());
             }
 
-            /*上传进度回调*/
+            /** 上传进度回调 **/
             @Override
             public void onProgress(int bytesWritten, int totalSize) {
                 Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
@@ -296,19 +296,19 @@ private static final long DEFAULT_BLOCK_SIZE = 1 * 1024 * 1024;
 */
 FileUploader.sliceUpload(context, uploadToken, ipaFile, DEFAULT_BLOCK_SIZE, new SliceUploaderListener() {
          
-          /* 上传成功回调 */
+          /** 上传成功回调 **/
           @Override
           public void onSliceUploadSucceed(JSONObject jsonObject) {
             Log.d("CNCLog", "slice upload succeeded.");
           }
 
-          /*上传失败回调*/
+          /** 上传失败回调 **/
           @Override
           public void onSliceUploadFailured(OperationMessage operationMessage) {
             Log.d("CNCLog", "slice upload failured.");
           }
 
-          /*上传进度回调*/
+          /** 上传进度回调 **/
           @Override
           public void onProgress(long uploaded, long total) {
             Log.d("CNCLog", String.format(Locale.CHINA, "uploaded : %s, total : %s", uploaded, total));
