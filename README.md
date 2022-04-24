@@ -114,7 +114,7 @@ conf.keyName = <fileKey>;
 
 // 通过表单参数设置文件的mimeType
 conf.mimeType = '<mimeType>';
-// 通过表单参数设置文件过期时间
+// 通过表单参数设置文件的保存天数，如30-文件保存30天后自动删除
 conf.deadline = '<deadline>';
 FileUploader.setParams(conf);
 ```
