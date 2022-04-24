@@ -100,7 +100,7 @@ public static final String MGR_URL = "您的管理域名";
     FileUploader.setClientConfig(config);
 ```
 
-3. 设置表单参数，文件名，mimeType等
+3. 通过表单参数，指定自定义参数，如文件名，mimeType，deadline等【注：此为非必填参数】
 ```
 import com.chinanetcenter.wcs.android.api.ParamsConf;
 
@@ -109,12 +109,12 @@ conf = new ParamsConf();
 // 原始文件名称
 conf.fileName = '<原始文件>';
 
-// 通过表单参数设置文件保存到云存储的名称
+// 通过表单参数设置文件保存到云存储的名称，非必填，上传token中指定的文件优先
 conf.keyName = <fileKey>;
 
-// 通过表单参数设置文件的mimeType
+// 通过表单参数设置文件的mimeType，非必填，默认由系统检测文件的mimeType
 conf.mimeType = '<mimeType>';
-// 通过表单参数设置文件的保存天数，如30-文件保存30天后自动删除
+// 通过表单参数设置文件的保存天数，如30-文件保存30天后自动删除，非必填，默认永久保存
 conf.deadline = '<deadline>';
 FileUploader.setParams(conf);
 ```
