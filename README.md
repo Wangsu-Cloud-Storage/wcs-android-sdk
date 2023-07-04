@@ -98,11 +98,11 @@ public static final String MGR_URL = "您的管理域名";
     // 设置分片上传并发数为10，不配置时默认值为5
     config.setMaxConcurrentRequest(10);
     
-    // 设置l链接超时时间，单位毫秒，默认15秒
+    // 设置链接超时时间，单位毫秒，默认15秒
     config.setConnectionTimeout(15000)
     
     // 设置传输超时时间，单位毫秒，默认30秒
-    config.setConnectionTimeout(30000)
+    config.setSocketTimeout(30000)
     
     // 设置请求失败重试次数，默认1次
     config.setMaxErrorRetry(3)
