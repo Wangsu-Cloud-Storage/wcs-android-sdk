@@ -1,3 +1,5 @@
+## Language switch [English](README.en.md)
+
 ## wcs-android-sdk
 
 ANDROID SDK基于网宿云存储API规范构建，适用于ANDROID。使用此SDK构建您的移动APP，能让您非常便捷地将数据安全地存储到网宿云平台上。
