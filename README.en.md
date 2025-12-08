@@ -1,17 +1,20 @@
-## 语言切换 [中文](README.md)
+# Cloud Storage Android SDK
+## 语言 / Language
+- [简体中文](README.md)
+- [English](README.en.md)
 
 ## wcs-android-sdk
-# Prerequisites
+### Prerequisites
 - Object Storage is activated.
 - The AccessKey and SecretKey are created
 
 
-# Download SDK
+### Download SDK
 [Android SDK](https://wcsd.chinanetcenter.com/sdk/cnc-android-sdk-wcs.zip)
 
-# How to use it
-## Prepare the development environment
-### 1. Development environment preparation in mobile end
+## How to use it
+### Prepare the development environment
+#### 1. Development environment preparation in mobile end
 - Download SDK package
 - Decompress it, and you will get jar packages under libs directory. Currently we have 3 jars: wcs-android-sdk-x.x.x.jar, okhttp-3.x.x.jar and okio-1.x.x.jar
 - Import the 3 jar packages to libs directory in project.

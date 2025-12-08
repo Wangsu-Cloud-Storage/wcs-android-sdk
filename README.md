@@ -1,34 +1,19 @@
-## Language switch [English](README.en.md)
+# 云存储 Android SDK
+
+## 语言 / Language
+- [简体中文](README.md)
+- [English](README.en.md)
 
 ## wcs-android-sdk
 
 ANDROID SDK基于网宿云存储API规范构建，适用于ANDROID。使用此SDK构建您的移动APP，能让您非常便捷地将数据安全地存储到网宿云平台上。
 
-- [下载链接](#下载链接)
-- [移动端场景演示](#移动端场景演示)
-- [使用指南](#使用指南) 
-  -  [准备开发环境](#准备开发环境)
-  -  [配置信息](k#配置信息)
-  -  [文件上传](#文件上传)
-  -  [文件完整性校验](#文件完整性校验)
-
 ## 工程介绍
-
-
 工程源码：[wcs-android-sdk](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/master/wcs-android-sdk)
-
 sample目录：[app](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/master/app/src/main)
-
 jar包：[jar](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/master/app/libs)
 
-
-
-
-
-
-
 ### 下载链接
-
 [wcs-android-sdk下载链接](https://wcsd.chinanetcenter.com/sdk/cnc-android-sdk-wcs.zip)
 
 ### 移动端场景演示
