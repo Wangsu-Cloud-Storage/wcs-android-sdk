@@ -6,7 +6,7 @@
 
 ## wcs-android-sdk
 
-ANDROID SDK基于网宿云存储API规范构建，适用于ANDROID。使用此SDK构建您的移动APP，能让您非常便捷地将数据安全地存储到网宿云平台上。
+ANDROID SDK基于wcs云存储API规范构建，适用于ANDROID。使用此SDK构建您的移动APP，能让您非常便捷地将数据安全地存储到wcs云平台上。
 
 ## 工程介绍
 工程源码：[wcs-android-sdk](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/master/wcs-android-sdk)
@@ -20,8 +20,8 @@ jar包：[jar](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/mast
 
 1) 移动端向企业自建WEB服务端请求上传凭证 
 2) 企业自建WEB服务端将构建好的上传凭证返回移动端 
-3) 移动端调用网宿云存储平台提供的接口上传文件 
-4) 网宿云存储在检验凭证合法性后，执行移动端请求的接口逻辑，最终返回给移动端处理结果 
+3) 移动端调用wcs云存储平台提供的接口上传文件 
+4) wcs云存储在检验凭证合法性后，执行移动端请求的接口逻辑，最终返回给移动端处理结果 
 
 ![img](https://wcs.chinanetcenter.com/indexNew/image/wcs/wcs-android-sdk1.png)
 
@@ -131,15 +131,15 @@ FileUploader.setParams(conf);
 
 <2>若文件大小超过2M，建议使用分片上传 
 
-<3>云存储提供的上传域名为普通域名，若对上传速度较为敏感，有要求的客户建议采用网宿上传加速服务。
+<3>云存储提供的上传域名为普通域名，若对上传速度较为敏感，有要求的客户建议采用上传加速服务。
 
 
 1.普通上传（POST方式） 
 用户在上传文件后，上传返回结果由云存储平台统一控制，规范统一化。
 
-&emsp;&emsp;如果用户指定上传策略数据的returnUrl，网宿云存储将反馈一个指向returnUrl的HTTP 303，驱动客户端执行跳转；
+&emsp;&emsp;如果用户指定上传策略数据的returnUrl，wcs云存储将反馈一个指向returnUrl的HTTP 303，驱动客户端执行跳转；
 
-&emsp;&emsp;如果用户没指定上传策略数据的returnUrl，网宿云存储根据returnbody的设定向客户端发送反馈信息。
+&emsp;&emsp;如果用户没指定上传策略数据的returnUrl，wcs云存储根据returnbody的设定向客户端发送反馈信息。
 
 **范例：**
 
@@ -185,7 +185,7 @@ private void uploadFile(File srcFile) {
 使用该上传模式需要启用上传策略数据的callbackUrl参数,而callbackBody参数可选（建议使用该参数）。 
 *注意：returnUrl和callbackUrl不能同时指定。*
 
-&emsp;&emsp;如果指定了callbackBody参数，云存储将接收此参数，并向callbackUrl指定的地址发起一个HTTP请求回调业务服务器，同时向业务服务器发送数据。发送的数据内容由callbackBody指定。业务服务器完成回调的处理后，可以在HTTP Response中放入数据，网宿云存储会响应客户端，并将业务服务器反馈的数据发送给客户端。
+&emsp;&emsp;如果指定了callbackBody参数，云存储将接收此参数，并向callbackUrl指定的地址发起一个HTTP请求回调业务服务器，同时向业务服务器发送数据。发送的数据内容由callbackBody指定。业务服务器完成回调的处理后，可以在HTTP Response中放入数据，wcs云存储会响应客户端，并将业务服务器反馈的数据发送给客户端。
 如果不指定callbackBody参数，云存储将返回空串给客户端。
 
 **范例：**
@@ -229,7 +229,7 @@ private void uploadFile(File srcFile) {
 
 3.通知上传 (POST方式) 
 
-用户在上传文件的同时，提交文件处理指令，请求网宿云存储平台对上传的文件进行处理。由于处理操作较耗时，为了不影响客户端的体验，网宿云存储平台采用异步处理策略，处理完成后将结果自动通知客户服务端。 
+用户在上传文件的同时，提交文件处理指令，请求wcs云存储平台对上传的文件进行处理。由于处理操作较耗时，为了不影响客户端的体验，wcs云存储平台采用异步处理策略，处理完成后将结果自动通知客户服务端。 
 使用该上传模式需要启用上传策略数据的persistentOps参数和persistentNotifyUrl参数。
 
 **范例：**
