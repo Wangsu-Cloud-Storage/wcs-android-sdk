@@ -55,7 +55,7 @@ Android Studio:
 
 2)右键选择Add As Library
 
-![移动开发环境准备3](http://doc-pics.w.wcsapi.biz.matocloud.com/sdk/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-android.png)
+![移动开发环境准备3](https://wcs.chinanetcenter.com/sdk/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-android.png)
 
 3)点击OK。
 
