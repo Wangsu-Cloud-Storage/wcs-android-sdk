@@ -1,87 +1,104 @@
 # Cloud Storage Android SDK
 
-## 语言 / Language
-
+## Language
 - [简体中文](README.md)
 - [English](README.en.md)
 
 ## wcs-android-sdk
 
-### Prerequisites
+The ANDROID SDK is built based on the wcs cloud storage API specification and is suitable for ANDROID. Using this SDK to build your mobile APP allows you to conveniently and securely store data on the wcs cloud platform.
 
-- Object Storage is activated.
-- The AccessKey and SecretKey are created
+## Project Introduction
+Project source code: [wcs-android-sdk](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/master/wcs-android-sdk)
+sample directory: [app](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/master/app/src/main)
+jar package: [jar](https://github.com/Wangsu-Cloud-Storage/wcs-android-sdk/tree/master/app/libs)
 
-### Download SDK
+### Download Link
+[wcs-android-sdk download link](https://wcsd.chinanetcenter.com/sdk/cnc-android-sdk-wcs.zip)
 
-[Android SDK](https://wcsd.chinanetcenter.com/sdk/cnc-android-sdk-wcs.zip)
+### Mobile Terminal Scene Demonstration
 
-## How to use it
+1) The mobile terminal requests upload credentials from the enterprise's self-built WEB server
+2) The enterprise's self-built WEB server returns the constructed upload credentials to the mobile terminal
+3) The mobile terminal calls the interface provided by the wcs cloud storage platform to upload files
+4) After verifying the validity of the credentials, wcs cloud storage executes the interface logic requested by the mobile terminal, and finally returns the processing result to the mobile terminal
 
-### Prepare the development environment
+![img](https://wcsd.chinanetcenter.com/sdk/wcs-android-sdk1.png)
 
-#### 1. Development environment preparation in mobile end
+### Usage Guide
 
-- Download SDK package
-- Decompress it, and you will get jar packages under libs directory. Currently we have 3 jars: wcs-android-sdk-x.x.x.jar, okhttp-3.x.x.jar and okio-1.x.x.jar
-- Import the 3 jar packages to libs directory in project.
+#### Prepare Development Environment
 
-#### For Eclipse
+1. Mobile terminal development environment preparation
+- Click on the official website to view and download the sdk package
+- After decompression, get the jar packages in the libs directory, currently including 3 jars: wcs-android-sdk-x.x.x.jar, okhttp-3.x.x.jar, okio-1.x.x.jar
+- Import the above 3 jar packages into the libs directory of the project
 
-!\[image]\(https\://user-images.githubusercontent.com/98135632/151097790-940f688d-1258-48fe-b8b4-a791578c4434.png null)
+Eclipse:
+![Copy to project libs directory](https://wcsd.chinanetcenter.com/sdk/wcs-android-sdk2.png)
 
-1\)If the ADT plugin is above 16, it will automatically put jat to Android Dependencies, and it will also finish the following importing jar packages; if the ADT plugin isn't above 16, please jump to 3).
+1) If the ADT plugin used is version 16 or above, it will automatically put the jar into Android Dependencies and automatically complete the subsequent import of the jar package; if not, please continue to browse step 3;
 
-2\)Right click on project, go to Properties;
+2) Right-click on the project and select Properties;
 
-3\)Click Java Build Path->Libraries
+3) Click Java Build Path->Libraries;
 
-4\)Click Add Jars, choose wcs-android-sdk-x.x.x.jar, okhttp-3.x.x.jar and okio-1.x.x.jar under directory libs.
-!\[image]\(https\://user-images.githubusercontent.com/98135632/151097833-9326522b-695b-4dae-84ee-6ec091e71917.png null)
+4) Click Add Jars, select wcs-android-sdk-x.x.x.jar, okhttp-3.x.x.jar, okio-1.x.x.jar under the project libs directory;
 
-5\)Click OK
+![Mobile development environment preparation 2](https://wcsd.chinanetcenter.com/sdk/wcs-android-sdk3.png)
 
-#### For Android Studio
+5) Click OK.
 
-1\)Select the 3 jar packages
+Android Studio:
 
-2\)Right click select ***Add As Library***
+1) Select the 3 jar packages
 
-3\)Click OK
+2) Right click and select Add As Library
 
-- Configure network permission, AndroidManifest.xml.
+![Mobile development environment preparation 3](https://wcsd.chinanetcenter.com/sdk/wcs-android-sdk4.png)
 
-### 2. Development environment preparation in server end
+3) Click OK.
 
-Please refer to wcs-Java-SDK: <https://github.com/CDNetworks-Object-Storage/wcs-java-sdk>
+- Configure network permissions: Add <uses-permission android:name="android.permission.INTERNET"/> to AndroidManifest.xml.
+
+2. Server-side development environment preparation
+
+For server-side development environment, please refer to wcs-Java-SDK: https://github.com/Wangsu-Cloud-Storage/wcs-java-sdk
 
 #### Initialization
 
-Initialization is mainly to finish upload domain config, client para config (optional), multipart upload concurrency, response timeout, connect timeout, retry times, etc.
+Initialization mainly completes the upload domain setting and Client parameter configuration (optional) - shard upload concurrency, response timeout, connection timeout, retry times.
 
-##### 2.1 Set upload/management domain by config file
-
+1. Set upload and management domains uniformly through configuration files
 ```
 com.chinanetcenter.wcs.android.Config.java
 
 public static final String PUT_URL = "Your upload domain";
-public static final String MGR_URL = "You management domain";
+public static final String MGR_URL = "Your management domain";
 ```
 
-##### 2.2 Specify in the program
+2. Specify in the program
+```java
+FileUploader.setUploadUrl("Your upload domain");
 
+ClientConfig config = new ClientConfig();
+
+// Set the shard upload concurrency to 10, default value is 5 if not configured
+config.setMaxConcurrentRequest(10);
+
+// Set connection timeout, in milliseconds, default 15 seconds
+config.setConnectionTimeout(15000)
+
+// Set transfer timeout, in milliseconds, default 30 seconds
+config.setSocketTimeout(30000)
+
+// Set request failure retry times, default 1 time
+config.setMaxErrorRetry(3)
+
+FileUploader.setClientConfig(config);
 ```
-    FileUploader.setUploadUrl("Your upload domain");
-    
-    ClientConfig config = new ClientConfig();
-    
-    // Set the concurrency of multipart upload ad 10, the default value is 5
-    config.setMaxConcurrentRequest(10);
-    FileUploader.setClientConfig(config);
-```
 
-##### 2.3 Set parameters of datasheet
-
+3. Specify custom parameters through form parameters, such as file name, mimeType, deadline, etc. [Note: This is a non-required parameter]
 ```
 import com.chinanetcenter.wcs.android.api.ParamsConf;
 
@@ -90,107 +107,116 @@ conf = new ParamsConf();
 // Original file name
 conf.fileName = '<Original file>';
 
-// Set the file name in WCS
+// Set the name of the file to be saved to cloud storage through form parameters, not required, the file specified in the upload token has priority
 conf.keyName = <fileKey>;
 
-// Set the mimeType of file
+// Set the mimeType of the file through form parameters, not required, the system will detect the mimeType of the file by default
 conf.mimeType = '<mimeType>';
-
-// Set DDL of file
+// Set the number of days the file is saved through form parameters, such as 30 - the file will be automatically deleted after 30 days of saving, not required, default is permanent saving
 conf.deadline = '<deadline>';
 FileUploader.setParams(conf);
 ```
 
-#### Customize the size of block and part
+#### Custom Block and Chunk Sizes
 
-The size of block is 4M as default, it must be a multiple of 4M, and the max value can't be exceed 100M.
-The size of part is 256KB as default, it must be a multiple of 64K, and the max value can't be exceed the size of block.
+Block size, default is 4M, must be a multiple of 4M, maximum cannot exceed 100M.
+Chunk size, default is 4M, must be a multiple of 64K, maximum cannot exceed the block size.
 
+```java
+FileUploader.setBlockConfigs(4, 1024 * 4); // Set block size to 4M, chunk size to 4M
 ```
-  FileUploader.setBlockConfigs(8, 512); //Set block size as 8M, and part size as 512KB.
-```
 
-#### Upload
+#### File Upload
 
-<1> When uploading the datasheet, you can enable ***returnurl*** for page jumping, otherwise it is recommended not to set ***returnurl***.
+<1> When uploading forms, you can enable returnurl for page jump. It is recommended not to set returnurl in other cases.
 
-<2> If the file size exceeds 2M, multipart upload is recommended.
+<2> If the file size exceeds 2M, it is recommended to use shard upload
 
-<3> Cloud Storage provides a default upload domain for upload, if the upload speed is more sensitive, customers with such requirements is suggested to use CDNetworks CDN acceleration service.
+<3> The upload domain name provided by cloud storage is a normal domain name. If you are sensitive to upload speed and have requirements, it is recommended to use upload acceleration service.
 
-##### 1.Normal upload（POST）
 
-After the user uploads the file, the returned result is controlled and standardized by cloud storage.
+1. Normal upload (POST method)
+After the user uploads the file, the upload return result is uniformly controlled by the cloud storage platform, and the specification is unified.
 
-- If the user specifies the ***returnUrl*** for uploading policy data, cloud storage will feedback an ***HTTP 303*** to ***returnUrl***, driving the client end to perform the jump;
-- If the user does not specify a ***returnUrl*** for uploading policy data, cloud storage sends feedback to the client end based on the settings of The ***ReturnBody***.
+&emsp;&emsp;If the user specifies the returnUrl of the upload policy data, wcs cloud storage will feedback an HTTP 303 pointing to returnUrl, driving the client to execute the jump;
 
-###### Example
+&emsp;&emsp;If the user does not specify the returnUrl of the upload policy data, wcs cloud storage will send feedback information to the client according to the setting of returnbody.
 
-Code in mobile end：
+**Example:**
 
-```
+Mobile terminal code:
+
+```java
 /**
- * Example of upload interface
+ * Upload interface example
  */
 private void uploadFile(File srcFile) {
 /**
-         * UPLOADER_TOKEN-local
-         * srcFile-The file which requires to be uploaded from local
+         * UPLOADER_TOKEN - upload credential
+         * srcFile - local file to be uploaded
          */
         FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
 
+            /** Upload success callback **/
             @Override
             public void onSuccess(int status, JSONObject responseJson) {
                 Log.d(TAG, "responseJson : " + responseJson.toString());
             }
 
+            /** Upload failure callback **/
             @Override
             public void onFailure(OperationMessage operationMessage) {
                 Log.e(TAG, "errorMessage : " + operationMessage.toString());
             }
 
+            /** Upload progress callback **/
             @Override
             public void onProgress(int bytesWritten, int totalSize) {
                 Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
             }
         });
     }
-
 ```
 
-##### 2.Call back upload（POST）
+Server generates normal upload credentials: [Refer to upload credential instructions](https://wcs.chinanetcenter.com/document/API/Token/UploadToken)
 
-After the user uploads the file, user can customize the format of the information returned to the client. Using this upload mode requires enabling the ***callbackUrl*** parameter of the upload policy data, and the ***callbackBody*** parameter is optional (it is recommended). Note: ***returnUrl*** and ***callbackUrl*** cannot be specified together.
+2. Callback upload (POST method)
 
-- If a ***callbackBody*** parameter is specified, cloud storage will receive it and initiates an HTTP request to callback to server at the address specified in the ***callbackUrl***, sending data to server. The content of the data sent is specified by the ***callbackBody***. After the server completes the callback processing, it can put the data in the HTTP Response, and cloud storage will respond to the client and send the data fed back by server to the client.
-- If the ***callbackBody*** parameter is not specified, cloud storage returns an empty string to the client.
+After the user uploads the file, the information returned to the client is in a custom format. 
+Using this upload mode requires enabling the callbackUrl parameter of the upload policy data, and the callbackBody parameter is optional (it is recommended to use this parameter). 
+*Note: returnUrl and callbackUrl cannot be specified at the same time.*
 
-###### Example
+&emsp;&emsp;If the callbackBody parameter is specified, cloud storage will receive this parameter and initiate an HTTP request to callback the business server to the address specified by callbackUrl, and send data to the business server at the same time. The data content sent is specified by callbackBody. After the business server completes the callback processing, it can put data in the HTTP Response, and wcs cloud storage will respond to the client and send the data fed back by the business server to the client.
+If the callbackBody parameter is not specified, cloud storage will return an empty string to the client.
 
-Code in mobile end:
+**Example:**
 
-```
+Mobile terminal code:
+
+```java
  /**
-     * example of upload interface
+     * Upload interface example
      */
 private void uploadFile(File srcFile) {
 /**
-         * UPLOADER_TOKEN-token
-         * srcFile-The file which requires to be uploaded from local
+         * UPLOADER_TOKEN - upload credential
+         * srcFile - local file to be uploaded
          */
         FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
 
+            /** Upload success callback **/
             @Override
             public void onSuccess(int status, JSONObject responseJson) {
                 Log.d(TAG, "responseJson : " + responseJson.toString());
             }
 
+            /** Upload failure callback **/
             @Override
             public void onFailure(OperationMessage operationMessage) {
                 Log.e(TAG, "errorMessage : " + operationMessage.toString());
             }
 
+            /** Upload progress callback **/
             @Override
             public void onProgress(int bytesWritten, int totalSize) {
                 Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
@@ -198,38 +224,43 @@ private void uploadFile(File srcFile) {
         });
 
     }
-
 ```
 
-##### 3.Upload with notification (POST)
+Server generates callback upload credentials: [Refer to upload credential instructions](https://wcs.chinanetcenter.com/document/API/Token/UploadToken)
 
-At the same time the user uploates the file, it will submit the file processing instruction, requesting cloud storage to process the uploaded file. Due to the time-consuming processing operation, in order not to affect the experience of the client, cloud storage adopts the asynchronous processing strategy, and automatically informs the client service side of the result after the processing is completed. Using this upload pattern requires the ***persistentOps*** parameter and the ***persistentNotifyUrl*** parameter to be enabled for the upload policy data.
+3. Notification upload (POST method)
 
-###### Example
+While uploading files, users submit file processing instructions and request the wcs cloud storage platform to process the uploaded files. Since the processing operation is time-consuming, in order not to affect the client experience, the wcs cloud storage platform adopts an asynchronous processing strategy, and will automatically notify the customer server of the results after processing is completed. 
+Using this upload mode requires enabling the persistentOps parameter and persistentNotifyUrl parameter of the upload policy data.
 
-Code in mobile end
+**Example:**
 
-```
+Mobile terminal code:
+
+```java
 /**
-     * example of upload interface
+     * Upload interface example
      */
 private void uploadFile(File srcFile) {
 /**
-         * UPLOADER_TOKEN-token
-         * srcFile-The file which requires to be uploaded from local
+         * UPLOADER_TOKEN - upload credential
+         * srcFile - local file to be uploaded
          */
         FileUploader.upload(UPLOADER_TOKEN, srcFile, new FileUploaderListener() {
 
+            /** Upload success callback **/
             @Override
             public void onSuccess(int status, JSONObject responseJson) {
                 Log.d(TAG, "responseJson : " + responseJson.toString());
             }
 
+            /** Upload failure callback **/
             @Override
             public void onFailure(OperationMessage operationMessage) {
                 Log.e(TAG, "errorMessage : " + operationMessage.toString());
             }
 
+            /** Upload progress callback **/
             @Override
             public void onProgress(int bytesWritten, int totalSize) {
                 Log.d(TAG, String.format("Progress %d from %d (%s)", bytesWritten, totalSize, (totalSize > 0) ? ((float) bytesWritten / totalSize) * 100 : -1));
@@ -237,63 +268,62 @@ private void uploadFile(File srcFile) {
         });
 
     }
-
 ```
 
-##### 4.Multipart upload（POST）
+Server generates notification upload credentials: [Refer to upload credential instructions](https://wcs.chinanetcenter.com/document/API/Token/UploadToken)
 
-It takes a long time to upload large files on the mobile end. Once abnormalities occur in the transmission process, all file contents need to be retransmitted, which will affect the user experience. To avoid this problem, multipart upload mechanism is introduced.
+4. Shard upload (POST method)
 
-Multipart upload mechanism is to slice a large file into many custom sized blocks, and then upload these blocks in parallel. If a block upload fails, the client just needs to re-upload the block.
+Uploading large files on mobile terminals takes a long time. Once an exception occurs during transmission, the entire file content needs to be retransmitted, which affects user experience. To avoid this problem, a shard upload mechanism is introduced.
 
-Note: The maximum size of each block should not exceed 100M; It must not be less than 4M, otherwise the default value will be set as 4M.
+The shard upload mechanism is to split a large file into multiple blocks of custom size, and then upload these blocks in parallel. If a block fails to upload, the client only needs to re-upload this block.
 
-###### Example
+*Note: The maximum size of each block cannot exceed 100M; the minimum cannot be less than 4M, otherwise the default 4M will be used for splitting.*
 
-Code in mobile end
+**Example**
 
-```
+Mobile terminal code:
+
+```java
 private static final long DEFAULT_BLOCK_SIZE = 1 * 1024 * 1024;
 /**
-* context
-* uploadToken-Token
-* ipaFile-the file requires to be uploaded
-* DEFAULT_BLOCK_SIZE-block size
+* context - current context of the application
+* uploadToken - upload Token
+* ipaFile - file to be uploaded
+* DEFAULT_BLOCK_SIZE - block size
 */
 FileUploader.sliceUpload(context, uploadToken, ipaFile, DEFAULT_BLOCK_SIZE, new SliceUploaderListener() {
+         
+          /** Upload success callback **/
           @Override
           public void onSliceUploadSucceed(JSONObject jsonObject) {
-Log.d("CNCLog", "slice upload succeeded.");
-}
+            Log.d("CNCLog", "slice upload succeeded.");
+          }
 
-@Override
-public void onSliceUploadFailured(OperationMessage operationMessage) {
-Log.d("CNCLog", "slice upload failured.");
-}
+          /** Upload failure callback **/
+          @Override
+          public void onSliceUploadFailured(OperationMessage operationMessage) {
+            Log.d("CNCLog", "slice upload failured.");
+          }
 
-@Override
-public void onProgress(long uploaded, long total) {
-Log.d("CNCLog", String.format(Locale.CHINA, "uploaded : %s, total : %s", uploaded, total));
-}
+          /** Upload progress callback **/
+          @Override
+          public void onProgress(long uploaded, long total) {
+            Log.d("CNCLog", String.format(Locale.CHINA, "uploaded : %s, total : %s", uploaded, total));
+          }
 });
-
 ```
 
-#### Integrity checker
+Server generates shard upload credentials: [Refer to upload credential instructions](https://wcs.chinanetcenter.com/document/API/Token/UploadToken)
 
-If the integrity of the successfully uploaded file needs to be verified, the file hash can be calculated on the client side and compared with the hash returned by cloud storage after the successful upload. If the hash is consistent, it indicates that the file is complete.
+#### File Integrity Verification
+If you need to verify whether the successfully uploaded file is complete, you can calculate the file hash on the client side and compare it with the hash returned by cloud storage after successful upload. If the hashes are consistent, it indicates that the file is complete.
 
-Note: Calculations of file hash values consume resources, so use it with caution
+*Note: The calculation of file hash value consumes more resources, please use it with caution*
 
-###### Example
-
+**Example**
 ```
 import com.chinanetcenter.wcs.android.utils.WetagUtil;
 
 WetagUtil.getEtagHash(file);
-
 ```
-
-```
-```
-
